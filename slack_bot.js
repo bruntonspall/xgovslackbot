@@ -38,7 +38,6 @@ var bot = controller.spawn({
 }).startRTM();
 
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
-    controller.log("Hello from "+JSON.stringify(message));
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
@@ -203,10 +202,6 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
              '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
     });
-
-function inviteUser(email, message) {
-
-}
 
 function formatUptime(uptime) {
     var unit = 'second';
