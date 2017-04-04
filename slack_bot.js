@@ -33,6 +33,19 @@ if (appEnv.isLocal) {
   });
 }
 
+controller.setupWebserver(process.env.PORT || 3000,function(err,webserver) {
+
+  // // set up web endpoints for oauth, receiving webhooks, etc.
+  // controller
+  //   .createOauthEndpoints(controller.webserver,function(err,req,res) { ... })
+  //   .createWebhookEndpoints(controller.webserver);
+
+  controller.webserver.get('/', function(req, res) {
+        res.send('<p>Welcome to X-Gov-Slack bot</p>'+
+        '<p><a href="https://ukgovernmentdigital.slack.com">Sign up</a></p>');
+    });
+});
+
 var bot = controller.spawn({
     token: process.env.token
 }).startRTM();
