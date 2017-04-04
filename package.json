@@ -5,7 +5,8 @@
   "main": "slack_bot.js",
   "dependencies": {
     "botkit": "^0.5.2",
-    "botkit-storage-postgres": "^0.1.0"
+    "botkit-storage-postgres": "^0.1.0",
+    "cfenv": "^1.0.4"
   },
   "engines": {
     "node": "7.7.4",
