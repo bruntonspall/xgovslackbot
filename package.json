@@ -1,0 +1,16 @@
+{
+  "name": "xgovslackbot",
+  "version": "1.0.0",
+  "description": "Cross Government Slackbot",
+  "main": "slack_bot.js",
+  "dependencies": {
+    "botkit": "^0.5.2",
+    "botkit-storage-postgres": "^0.1.0"
+  },
+  "engines": {
+    "node": "7.7.4",
+    "npm": "4.1.2"
+  },
+  "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
+  "license": "MIT"
+}
