@@ -45,6 +45,28 @@ controller.setupWebserver(process.env.PORT || 3000,function(err,webserver) {
         res.send('<p>Welcome to X-Gov-Slack bot</p>'+
         '<p><a href="https://ukgovernmentdigital.slack.com">Sign up</a></p>');
     });
+  controller.webserver.get('/users', function(req, res) {
+    controller.storage.users.all(function(err, users){
+      s = "";
+      s += '<h1>User database</h1>';
+
+      for (var i = 0; i < users.length; ++i) {
+        s += "<p>"+JSON.stringify(users[i])+"</p>";
+      }
+      res.send(s);
+    });
+  });
+  controller.webserver.get('/channels', function(req, res) {
+    controller.storage.channels.all(function(err, channels){
+      s = "";
+      s += '<h1>Channel database</h1>';
+
+      for (var i = 0; i < channels.length; ++i) {
+        s += "<p>"+JSON.stringify(channels[i])+"</p>";
+      }
+      res.send(s);
+    });
+  });
 });
 
 var bot = controller.spawn({
@@ -157,29 +179,69 @@ controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention
     });
 });
 
-controller.hears(['announce (.*)'],
+controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention,direct_message', function(bot, message) {
+  var channame = message.match[1];
+  var on = message.match[2] === "n";
+  controller.log("Channel Announce toggle for "+channame+" set to "+on);
+  controller.storage.channels.get(channame, function (err, channel) {
+    if (!channel) {
+      controller.log("Channel data not found.  Creating");
+      // The channel hasn't been seen before, so create and save it
+      request.post({
+            url: 'https://ukgovernmentdigital.slack.com/api/channels.info',
+            form: {
+              channel: channame,
+              token: process.env.apitoken,
+            }
+          }, function(err, httpResponse, body) {
+            controller.log("Channel info: "+body);
+            body = JSON.parse(body);
+            if (body["ok"]) {
+              channel = {
+                id: body["channel"]["id"],
+                name: body["channel"]["name"],
+                announce: on,
+              }
+              controller.storage.channels.save(channel, function(err, id) {
+                bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+              });
+            }
+          });
+    } else {
+      controller.log("Channel data found.  Updating");
+      channel.announce = on;
+      controller.storage.channels.save(channel, function(err, id) {
+        bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+      });
+    }
+  });
+})
+
+controller.hears(['^announce (.*)'],
   'direct_mention', function(bot, message) {
     /* Currently in channel, and only the #bot-test channel */
     var channel = message.channel;
     var msgtext = message.match[1];
     var user = message.user
     controller.log("Got asked to announce in "+channel+" by "+user+" with text: "+msgtext);
-    if (channel === "C4UCWCMA6") {
-      request.post({
-            url: 'https://ukgovernmentdigital.slack.com/api/chat.postMessage',
-            form: {
-              channel: channel,
-              token: process.env.apitoken,
-              username: "thegovernor",
-              icon_url:  "https://avatars.slack-edge.com/2017-04-04/164801788790_e3902f9310191c6ea722_72.png",
-              as_user: false,
-              text: "<!channel> "+msgtext+" (via <@"+user+">)"
-            }
-          });
-      bot.reply(message, "done");
-    } else {
-      bot.reply(message, "Only for the #bot-test channel for now");
-    }
+    controller.storage.channels.get(message.channel, function (err, channel) {
+      if (channel && channel.announce) {
+        request.post({
+              url: 'https://ukgovernmentdigital.slack.com/api/chat.postMessage',
+              form: {
+                channel: channel.id,
+                token: process.env.apitoken,
+                username: "thegovernor",
+                icon_url:  "https://avatars.slack-edge.com/2017-04-04/164801788790_e3902f9310191c6ea722_72.png",
+                as_user: false,
+                text: "<!channel> "+msgtext+" (via <@"+user+">)"
+              }
+            });
+        bot.reply(message, "done");
+      } else {
+        bot.reply(message, "Only for approved channels");
+      }
+    })
   }
 )
 
