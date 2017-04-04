@@ -23,12 +23,13 @@ if (appEnv.isLocal) {
 } else {
   var pgEnv = appEnv.getServices();
   var controller = Botkit.slackbot({
-      debug: true,
+      debug: false,
       storage: botkitStoragePostgres({
         host: pgEnv["my-pg-service"]["credentials"]["host"],
         user: pgEnv["my-pg-service"]["credentials"]["username"],
         password: pgEnv["my-pg-service"]["credentials"]["password"],
-        database: pgEnv["my-pg-service"]["credentials"]["database"]
+        port: pgEnv["my-pg-service"]["credentials"]["port"],
+        database: pgEnv["my-pg-service"]["credentials"]["name"],
       })
   });
 }
@@ -51,6 +52,8 @@ var bot = controller.spawn({
 }).startRTM();
 
 controller.hears(['^hello', '^hi'], 'direct_message,direct_mention,mention', function(bot, message) {
+  controller.log("Hello from "+message.user+" in channel "+message.channel);
+
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
@@ -160,6 +163,7 @@ controller.hears(['announce (.*)'],
     var channel = message.channel;
     var msgtext = message.match[1];
     var user = message.user
+    controller.log("Got asked to announce in "+channel+" by "+user+" with text: "+msgtext);
     if (channel === "C4UCWCMA6") {
       request.post({
             url: 'https://ukgovernmentdigital.slack.com/api/chat.postMessage',
@@ -167,6 +171,7 @@ controller.hears(['announce (.*)'],
               channel: channel,
               token: process.env.apitoken,
               username: "thegovernor",
+              icon_url:  "https://avatars.slack-edge.com/2017-04-04/164801788790_e3902f9310191c6ea722_72.png",
               as_user: false,
               text: "<!channel> "+msgtext+" (via <@"+user+">)"
             }
@@ -213,6 +218,7 @@ controller.hears(['^invite.*\\|(.*)>'],
 
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
+        controller.log("Got asked for uptime");
 
         var hostname = os.hostname();
         var uptime = formatUptime(process.uptime());
