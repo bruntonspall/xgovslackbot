@@ -8,26 +8,37 @@ var botkitStoragePostgres = require('botkit-storage-postgres');
 var Botkit = require('botkit');
 var os = require('os');
 var request = require('request');
-
-const port = process.env.PORT || 3000;
-
-
-var controller = Botkit.slackbot({
-    debug: true,
-    storage: botkitStoragePostgres({
-      host: process.env.DATABASE_URL,
-      user: 'botkit',
-      password: 'botkit',
-      database: 'botkit'
-    })
-});
+var cfenv = require("cfenv");
+var appEnv = cfenv.getAppEnv();
+if (appEnv.isLocal) {
+  var controller = Botkit.slackbot({
+      debug: true,
+      storage: botkitStoragePostgres({
+        host: "localhost",
+        user: "xgovslackbot",
+        password: "xgovslackbot",
+        database: "xgovslackbot"
+      })
+  });
+} else {
+  var pgEnv = appEnv.getServices();
+  var controller = Botkit.slackbot({
+      debug: true,
+      storage: botkitStoragePostgres({
+        host: pgEnv["my-pg-service"]["credentials"]["host"],
+        user: pgEnv["my-pg-service"]["credentials"]["username"],
+        password: pgEnv["my-pg-service"]["credentials"]["password"],
+        database: pgEnv["my-pg-service"]["credentials"]["database"]
+      })
+  });
+}
 
 var bot = controller.spawn({
     token: process.env.token
 }).startRTM();
 
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
-
+    controller.log("Hello from "+JSON.stringify(message));
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
@@ -139,7 +150,7 @@ controller.hears(['announce #([a-z]*) (.*)'],
       bot.say(
         {
           "text": "@announce "+msgtext+" (via )",
-          "channel": channel
+          "channel": "#"+channel
         }
       )
     } else {
@@ -149,21 +160,37 @@ controller.hears(['announce #([a-z]*) (.*)'],
 )
 
 
-controller.hears(['invite (.*@.*)'],
+controller.hears(['^invite.*\\|(.*)>'],
   'direct_message, direct_mention', function(bot, message) {
-    var res = inviteUser(message.match[1]);
-    if (res === "OK") {
-      bot.reply(message, "Invite sent, tell them to check their email");
-    } else {
-      if (res === "invalid_email") {
-        bot.reply(message, "The email is not valid");
-      }
-      else if (res === "invalid_auth") {
-        bot.reply(message, "The Governor doesn't have the rights to do that")
-      }
-    }
-  }
-)
+    controller.log("Got an invite for email: "+message.match[1]);
+    request.post({
+          url: 'https://ukgovernmentdigital.slack.com/api/users.admin.invite',
+          form: {
+            email: message.match[1],
+            token: process.env.apitoken,
+            set_active: true
+          }
+        }, function(err, httpResponse, body) {
+          // body looks like:
+          //   {"ok":true}
+          //       or
+          //   {"ok":false,"error":"already_invited"}
+          if (err) { return res.send('Error:' + err); }
+          body = JSON.parse(body);
+          if (body.ok) {
+            bot.reply(message, "Invite sent, tell them to check their email");
+          } else {
+            if (body.error === "invalid_email") {
+              bot.reply(message, "The email is not valid.  Email: "+message.match[1]);
+            }
+            else if (body.error === "invalid_auth") {
+              bot.reply(message, "The Governor doesn't have the rights to do that");
+            } else {
+              bot.reply(message, "The Governor got error: "+body.error);
+            }
+          }
+        });
+  });
 
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
@@ -177,27 +204,8 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 
     });
 
-function inviteUser(email) {
-  request.post({
-        url: 'https://ukgovernmentdigital.slack.com/api/users.admin.invite',
-        form: {
-          email: email,
-          token: process.env.apitoken,
-          set_active: true
-        }
-      }, function(err, httpResponse, body) {
-        // body looks like:
-        //   {"ok":true}
-        //       or
-        //   {"ok":false,"error":"already_invited"}
-        if (err) { return res.send('Error:' + err); }
-        body = JSON.parse(body);
-        if (body.ok) {
-          return "OK";
-        } else {
-          return body.error;
-        }
-      });
+function inviteUser(email, message) {
+
 }
 
 function formatUptime(uptime) {
