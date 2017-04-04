@@ -37,7 +37,7 @@ var bot = controller.spawn({
     token: process.env.token
 }).startRTM();
 
-controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
+controller.hears(['^hello', '^hi'], 'direct_message,direct_mention,mention', function(bot, message) {
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
@@ -141,19 +141,26 @@ controller.hears(['what is my name', 'who am i'], 'direct_message,direct_mention
     });
 });
 
-controller.hears(['announce #([a-z]*) (.*)'],
-  'direct_message, direct_mention', function(bot, message) {
-    var channel = message.match[1];
-    var msgtext = message.match[2];
-    if (channel === "bots") {
-      bot.say(
-        {
-          "text": "@announce "+msgtext+" (via )",
-          "channel": "#"+channel
-        }
-      )
+controller.hears(['announce (.*)'],
+  'direct_mention', function(bot, message) {
+    /* Currently in channel, and only the #bot-test channel */
+    var channel = message.channel;
+    var msgtext = message.match[1];
+    var user = message.user
+    if (channel === "C4UCWCMA6") {
+      request.post({
+            url: 'https://ukgovernmentdigital.slack.com/api/chat.postMessage',
+            form: {
+              channel: channel,
+              token: process.env.apitoken,
+              username: "thegovernor",
+              as_user: false,
+              text: "<!channel> "+msgtext+" (via <@"+user+">)"
+            }
+          });
+      bot.reply(message, "done");
     } else {
-      bot.reply(message, "If I were working, I'd say '@announce "+msgtext+"' to "+channel);
+      bot.reply(message, "Only for the #bot-test channel for now");
     }
   }
 )
