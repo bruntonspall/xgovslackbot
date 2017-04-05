@@ -4,7 +4,7 @@ if (!process.env.token) {
     process.exit(1);
 }
 
-var botkitStoragePostgres = require('botkit-storage-postgres');
+var botkitStoragePostgres = require('./pg_storage');
 var Botkit = require('botkit');
 var os = require('os');
 var request = require('request');
