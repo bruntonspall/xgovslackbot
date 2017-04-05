@@ -9,6 +9,13 @@ var Botkit = require('botkit');
 var os = require('os');
 var request = require('request');
 var cfenv = require("cfenv");
+
+if (!process.env.slackDomain) {
+  var slackDomain = "ukgovernmentdigital";
+} else {
+  var slackDomain = process.env.slackDomain;
+}
+
 var appEnv = cfenv.getAppEnv();
 if (appEnv.isLocal) {
   var controller = Botkit.slackbot({
@@ -45,7 +52,7 @@ controller.setupWebserver(process.env.PORT || 3000,function(err,webserver) {
 
   controller.webserver.get('/', function(req, res) {
         res.send('<p>Welcome to X-Gov-Slack bot</p>'+
-        '<p><a href="https://ukgovernmentdigital.slack.com">Sign up</a></p>');
+        `<p><a href="https://${slackDomain}.slack.com">Sign up</a></p>`);
     });
   controller.webserver.get('/users', function(req, res) {
     controller.storage.users.all(function(err, users){
@@ -122,7 +129,7 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention,di
       controller.log("Channel data not found.  Creating");
       // The channel hasn't been seen before, so create and save it
       request.post({
-            url: 'https://ukgovernmentdigital.slack.com/api/channels.info',
+            url: `https://${slackDomain}.slack.com/api/channels.info`,
             form: {
               channel: channame,
               token: process.env.apitoken,
@@ -161,7 +168,7 @@ controller.hears(['^announce (.*)'],
     controller.storage.channels.get(message.channel, function (err, channel) {
       if (channel && channel.announce) {
         request.post({
-              url: 'https://ukgovernmentdigital.slack.com/api/chat.postMessage',
+              url: `https://${slackDomain}.slack.com/api/chat.postMessage`,
               form: {
                 channel: channel.id,
                 token: process.env.apitoken,
@@ -189,7 +196,7 @@ controller.hears(['^invite.*\\|(.*)>'],
       return;
     }
     request.post({
-          url: 'https://ukgovernmentdigital.slack.com/api/users.admin.invite',
+          url: `https://${slackDomain}.slack.com/api/users.admin.invite`,
           form: {
             email: email,
             token: process.env.apitoken,
