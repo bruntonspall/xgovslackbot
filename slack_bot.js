@@ -247,12 +247,17 @@ controller.hears(['^announce (.*)'],
 
 
 controller.hears(['^invite.*\\|(.*)>'],
-  'direct_message, direct_mention', function(bot, message) {
-    controller.log("Got an invite for email: "+message.match[1]);
+  'direct_message,direct_mention', function(bot, message) {
+    var email = message.match[1];
+    controller.log("Got an invite for email: "+email);
+    if (!hasApprovedEmailDomain(email)) {
+      bot.reply(message, "I only send invites to people with GOV.UK or otherwise approved email address");
+      return;
+    }
     request.post({
           url: 'https://ukgovernmentdigital.slack.com/api/users.admin.invite',
           form: {
-            email: message.match[1],
+            email: email,
             token: process.env.apitoken,
             set_active: true
           }
@@ -268,11 +273,12 @@ controller.hears(['^invite.*\\|(.*)>'],
           } else {
             if (body.error === "invalid_email") {
               bot.reply(message, "The email is not valid.  Email: "+message.match[1]);
-            }
-            else if (body.error === "invalid_auth") {
+            } else if (body.error === "invalid_auth") {
               bot.reply(message, "The Governor doesn't have the rights to do that");
+            } else if (body.error === "already_in_team") {
+              bot.reply(message, "That person is already invited");
             } else {
-              bot.reply(message, "The Governor got error: "+body.error);
+              bot.reply(message, "The Governor got an error from slack: "+body.error);
             }
           }
         });
@@ -290,6 +296,13 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
              '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
     });
+
+function hasApprovedEmailDomain(email) {
+  if (email.match(".*gov\.uk$")) {
+    return true;
+  }
+  return false;
+}
 
 function formatUptime(uptime) {
     var unit = 'second';
