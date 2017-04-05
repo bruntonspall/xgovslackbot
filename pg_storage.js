@@ -6,19 +6,17 @@ The API requirements for storage modules is you must provide 3 objects, users, t
 
 var pg = require('pg');
 
-module.exports = function(config) {
-  if (!config) {
-    config = {
-      user: config.user || process.env.BOTKIT_STORAGE_POSTGRES_USER || 'botkit',
-      database: config.database || process.env.BOTKIT_STORAGE_POSTGRES_DATABASE || 'botkit',
-      password: config.password || process.env.BOTKIT_STORAGE_POSTGRES_PASSWORD || 'botkit',
-      host: config.host || process.env.BOTKIT_STORAGE_POSTGRES_HOST || 'localhost',
-      port: config.port || process.env.BOTKIT_STORAGE_POSTGRES_PORT || '5432',
-      max: config.maxClients || process.env.BOTKIT_STORAGE_POSTGRES_MAX_CLIENTS || '10',
-      idleTimeoutMillis: config.idleTimeoutMillis || process.env.BOTKIT_STORAGE_POSTGRES_IDLE_TIMEOUT_MILLIS || '30000',
-      ssl: config.ssl || process.env.BOTKIT_STORAGE_POSTGRES_SSL || true,
-    };
-  }
+module.exports = function(srcConfig) {
+  config = {
+    user: srcConfig.user || process.env.BOTKIT_STORAGE_POSTGRES_USER || 'botkit',
+    database: srcConfig.database || process.env.BOTKIT_STORAGE_POSTGRES_DATABASE || 'botkit',
+    password: srcConfig.password || process.env.BOTKIT_STORAGE_POSTGRES_PASSWORD || 'botkit',
+    host: srcConfig.host || process.env.BOTKIT_STORAGE_POSTGRES_HOST || 'localhost',
+    port: srcConfig.port || process.env.BOTKIT_STORAGE_POSTGRES_PORT || '5432',
+    max: srcConfig.maxClients || process.env.BOTKIT_STORAGE_POSTGRES_MAX_CLIENTS || '10',
+    idleTimeoutMillis: srcConfig.idleTimeoutMillis || process.env.BOTKIT_STORAGE_POSTGRES_IDLE_TIMEOUT_MILLIS || '30000',
+    ssl: srcConfig.ssl || process.env.BOTKIT_STORAGE_POSTGRES_SSL || false,
+  };
 
   function initClient(config) {
     console.log('pg_storage: connecting to database '+config.database);

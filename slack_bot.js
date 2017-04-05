@@ -17,7 +17,8 @@ if (appEnv.isLocal) {
         host: "localhost",
         user: "xgovslackbot",
         password: "xgovslackbot",
-        database: "xgovslackbot"
+        database: "xgovslackbot",
+        ssl: false,
       })
   });
 } else {
@@ -30,6 +31,7 @@ if (appEnv.isLocal) {
         password: pgEnv["my-pg-service"]["credentials"]["password"],
         port: pgEnv["my-pg-service"]["credentials"]["port"],
         database: pgEnv["my-pg-service"]["credentials"]["name"],
+        ssl: true,
       })
   });
 }
