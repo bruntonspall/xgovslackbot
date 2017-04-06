@@ -326,7 +326,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
 });
 
 function hasApprovedEmailDomain(email) {
-  if (email.match(".*gov\.uk$")) {
+  if (email.match(".*\.gov\.uk$")) {
     return true;
   }
   return false;
