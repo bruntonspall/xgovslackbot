@@ -16,6 +16,8 @@ if (!process.env.slackDomain) {
   var slackDomain = process.env.slackDomain;
 }
 
+var secretWord = process.env.secretWord || "abracadabra";
+
 var appEnv = cfenv.getAppEnv();
 if (appEnv.isLocal) {
   var controller = Botkit.slackbot({
@@ -111,6 +113,8 @@ controller.hears(['^call me (.*)', '^my name is (.*)'], 'direct_message,direct_m
         if (!user) {
             user = {
                 id: message.user,
+                role: "user",
+                name: name
             };
         }
         user.name = name;
@@ -120,39 +124,49 @@ controller.hears(['^call me (.*)', '^my name is (.*)'], 'direct_message,direct_m
     });
 });
 
-controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention,direct_message', function(bot, message) {
+controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', function(bot, message) {
   var channame = message.match[1];
   var on = message.match[2] === "n";
-  controller.log("Channel Announce toggle for "+channame+" set to "+on);
-  controller.storage.channels.get(channame, function (err, channel) {
-    if (!channel) {
-      controller.log("Channel data not found.  Creating");
-      // The channel hasn't been seen before, so create and save it
-      request.post({
-            url: `https://${slackDomain}.slack.com/api/channels.info`,
-            form: {
-              channel: channame,
-              token: process.env.apitoken,
-            }
-          }, function(err, httpResponse, body) {
-            controller.log("Channel info: "+body);
-            body = JSON.parse(body);
-            if (body["ok"]) {
-              channel = {
-                id: body["channel"]["id"],
-                name: body["channel"]["name"],
-                announce: on,
-              }
-              controller.storage.channels.save(channel, function(err, id) {
-                bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
-              });
-            }
-          });
+  controller.storage.users.get(message.user, function(err, user) {
+    if (!user) {
+      bot.reply(message, "Only admins can do that");
     } else {
-      controller.log("Channel data found.  Updating");
-      channel.announce = on;
-      controller.storage.channels.save(channel, function(err, id) {
-        bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+      if (!user.role || user.role == "user") {
+        bot.reply(message, "Only admins can do that, and you are just a "+user.role);
+        return;
+      }
+      controller.log("Channel Announce toggle for "+channame+" set to "+on);
+      controller.storage.channels.get(channame, function (err, channel) {
+        if (!channel) {
+          controller.log("Channel data not found.  Creating");
+          // The channel hasn't been seen before, so create and save it
+          request.post({
+                url: `https://${slackDomain}.slack.com/api/channels.info`,
+                form: {
+                  channel: channame,
+                  token: process.env.apitoken,
+                }
+              }, function(err, httpResponse, body) {
+                controller.log("Channel info: "+body);
+                body = JSON.parse(body);
+                if (body["ok"]) {
+                  channel = {
+                    id: body["channel"]["id"],
+                    name: body["channel"]["name"],
+                    announce: on,
+                  }
+                  controller.storage.channels.save(channel, function(err, id) {
+                    bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+                  });
+                }
+              });
+        } else {
+          controller.log("Channel data found.  Updating");
+          channel.announce = on;
+          controller.storage.channels.save(channel, function(err, id) {
+            bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+          });
+        }
       });
     }
   });
@@ -236,7 +250,80 @@ controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is 
             ':robot_face: I am a bot named <@' + bot.identity.name +
              '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
-    });
+});
+
+controller.hears(["^superme (.*)"], "direct_message", function(bot, message) {
+  if (message.match[1] == secretWord) {
+    controller.log("Setting user "+message.user+" as superuser");
+    controller.storage.users.get(message.user, function(err, user) {
+      if (user) {
+        user.role = "super";
+      } else {
+        user = {
+          id: message.user,
+          role: "super"
+        }
+      }
+      controller.storage.users.save(user, function(err, res) {
+        bot.reply(message, "Set user "+user.id+" to "+user.role);
+      })
+    })
+  } else {
+    bot.reply(message, "Uh uh uh.  You didn't say the magic word!");
+  }
+});
+
+controller.hears(["^what role am i"], 'direct_mention,direct_message', function(bot, message) {
+  controller.log("Got asked for the role for "+message.user);
+  controller.storage.users.get(message.user, function(err, user) {
+    if (!user) {
+      bot.reply(message, "You are a user");
+    } else {
+      bot.reply(message, "You are a "+(user.role || "user"))
+    }
+  });
+});
+
+controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_message', function(bot, message) {
+  controller.log("set role message: "+message.match);
+  targetUser = message.match[1];
+  newRole = message.match[2];
+  controller.log("Got asked for the role for "+message.user);
+  controller.storage.users.get(message.user, function(err, user) {
+    if (user) {
+      switch (user.role) {
+        case "admin":
+          if (!(newRole == "user" || newRole == "admin")) {
+            bot.reply(message, "You can't set a user to that role");
+            return;
+          }
+          // else dropthrough
+        case "super":
+          controller.storage.users.get(targetUser, function(err, user) {
+            if (user) {
+              user.role = newRole;
+              controller.storage.users.save(user, function(err, res) {
+                bot.reply(message, "Set user "+user.id+" to "+user.role);
+              });
+            } else {
+              user = {
+                id: targetUser,
+                role: newRole
+              }
+              controller.storage.users.save(user, function(err, res) {
+                bot.reply(message, "Set user "+user.id+" to "+user.role);
+              });
+            }
+          });
+          break;
+        default:
+          bot.reply(message, "Your role of "+user.role+" is not recognised");
+      }
+    } else {
+      bot.reply(message, "I don't know who you are I'm afraid")
+    }
+  });
+});
 
 function hasApprovedEmailDomain(email) {
   if (email.match(".*gov\.uk$")) {
