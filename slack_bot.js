@@ -100,9 +100,9 @@ controller.hears(['^hello', '^hi'], 'direct_message,direct_mention,mention', fun
 
     controller.storage.users.get(message.user, function(err, user) {
         if (user && user.name) {
-            bot.reply(message, 'Hello ' + user.name + '!!');
+            bot.replyInThread(message, 'Hello ' + user.name + '!!');
         } else {
-            bot.reply(message, 'Hello '+message.user);
+            bot.replyInThread(message, 'Hello '+message.user);
         }
     });
 });
@@ -119,7 +119,7 @@ controller.hears(['^call me (.*)', '^my name is (.*)'], 'direct_message,direct_m
         }
         user.name = name;
         controller.storage.users.save(user, function(err, id) {
-            bot.reply(message, 'Got it. I will call you ' + user.name + ' from now on.');
+            bot.replyInThread(message, 'Got it. I will call you ' + user.name + ' from now on.');
         });
     });
 });
@@ -129,10 +129,10 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
   var on = message.match[2] === "n";
   controller.storage.users.get(message.user, function(err, user) {
     if (!user) {
-      bot.reply(message, "Only admins can do that");
+      bot.replyInThread(message, "Only admins can do that");
     } else {
       if (!user.role || user.role == "user") {
-        bot.reply(message, "Only admins can do that, and you are just a "+user.role);
+        bot.replyInThread(message, "Only admins can do that, and you are just a "+user.role);
         return;
       }
       controller.log("Channel Announce toggle for "+channame+" set to "+on);
@@ -156,7 +156,7 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
                     announce: on,
                   }
                   controller.storage.channels.save(channel, function(err, id) {
-                    bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+                    bot.replyInThread(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
                   });
                 }
               });
@@ -164,7 +164,7 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
           controller.log("Channel data found.  Updating");
           channel.announce = on;
           controller.storage.channels.save(channel, function(err, id) {
-            bot.reply(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
+            bot.replyInThread(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
           });
         }
       });
@@ -192,9 +192,9 @@ controller.hears(['^announce (.*)'],
                 text: "<!channel> "+msgtext+" (via <@"+user+">)"
               }
             });
-        bot.reply(message, "done");
+        bot.replyInThread(message, "done");
       } else {
-        bot.reply(message, "Only for approved channels");
+        bot.replyInThread(message, "Only for approved channels");
       }
     })
   }
@@ -206,7 +206,7 @@ controller.hears(['^invite.*\\|(.*)>'],
     var email = message.match[1];
     controller.log("Got an invite for email: "+email);
     if (!hasApprovedEmailDomain(email)) {
-      bot.reply(message, "I only send invites to people with GOV.UK or otherwise approved email address");
+      bot.replyInThread(message, "I only send invites to people with GOV.UK or otherwise approved email address");
       return;
     }
     request.post({
@@ -224,16 +224,16 @@ controller.hears(['^invite.*\\|(.*)>'],
           if (err) { return res.send('Error:' + err); }
           body = JSON.parse(body);
           if (body.ok) {
-            bot.reply(message, "Invite sent, tell them to check their email");
+            bot.replyInThread(message, "Invite sent, tell them to check their email");
           } else {
             if (body.error === "invalid_email") {
-              bot.reply(message, "The email is not valid.  Email: "+message.match[1]);
+              bot.replyInThread(message, "The email is not valid.  Email: "+message.match[1]);
             } else if (body.error === "invalid_auth") {
-              bot.reply(message, "The Governor doesn't have the rights to do that");
+              bot.replyInThread(message, "The Governor doesn't have the rights to do that");
             } else if (body.error === "already_in_team") {
-              bot.reply(message, "That person is already invited");
+              bot.replyInThread(message, "That person is already invited");
             } else {
-              bot.reply(message, "The Governor got an error from slack: "+body.error);
+              bot.replyInThread(message, "The Governor got an error from slack: "+body.error);
             }
           }
         });
@@ -246,7 +246,7 @@ controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is 
         var hostname = os.hostname();
         var uptime = formatUptime(process.uptime());
 
-        bot.reply(message,
+        bot.replyInThread(message,
             ':robot_face: I am a bot named <@' + bot.identity.name +
              '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
@@ -277,9 +277,9 @@ controller.hears(["^what role am i"], 'direct_mention,direct_message', function(
   controller.log("Got asked for the role for "+message.user);
   controller.storage.users.get(message.user, function(err, user) {
     if (!user) {
-      bot.reply(message, "You are a user");
+      bot.replyInThread(message, "You are a user");
     } else {
-      bot.reply(message, "You are a "+(user.role || "user"))
+      bot.replyInThread(message, "You are a "+(user.role || "user"))
     }
   });
 });
@@ -294,7 +294,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
       switch (user.role) {
         case "admin":
           if (!(newRole == "user" || newRole == "admin")) {
-            bot.reply(message, "You can't set a user to that role");
+            bot.replyInThread(message, "You can't set a user to that role");
             return;
           }
           // else dropthrough
@@ -303,7 +303,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
             if (user) {
               user.role = newRole;
               controller.storage.users.save(user, function(err, res) {
-                bot.reply(message, "Set user "+user.id+" to "+user.role);
+                bot.replyInThread(message, "Set user "+user.id+" to "+user.role);
               });
             } else {
               user = {
@@ -311,16 +311,16 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
                 role: newRole
               }
               controller.storage.users.save(user, function(err, res) {
-                bot.reply(message, "Set user "+user.id+" to "+user.role);
+                bot.replyInThread(message, "Set user "+user.id+" to "+user.role);
               });
             }
           });
           break;
         default:
-          bot.reply(message, "Your role of "+user.role+" is not recognised");
+          bot.replyInThread(message, "Your role of "+user.role+" is not recognised");
       }
     } else {
-      bot.reply(message, "I don't know who you are I'm afraid")
+      bot.replyInThread(message, "I don't know who you are I'm afraid")
     }
   });
 });
