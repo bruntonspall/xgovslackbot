@@ -82,7 +82,23 @@ controller.setupWebserver(process.env.PORT || 3000,function(err,webserver) {
 
 var bot = controller.spawn({
     token: process.env.token
-}).startRTM();
+});
+
+function start_rtm() {
+  bot.startRTM(function(err,bot,payload) {
+    if (err) {
+      console.log('Failed to start RTM')
+      return setTimeout(start_rtm, 60000);
+    }
+    console.log("RTM started!");
+  });
+};
+
+controller.on('rtm_close', function(bot, err) {
+        start_rtm();
+});
+
+start_rtm();
 
 controller.hears(['^hello', '^hi'], 'direct_message,direct_mention,mention', function(bot, message) {
   controller.log("Hello from "+message.user+" in channel "+message.channel);
