@@ -202,7 +202,7 @@ controller.hears(['^announce (.*)'],
               form: {
                 channel: channel.id,
                 token: process.env.apitoken,
-                username: "thegovernor",
+                username: "Michael Bot-Spall",
                 icon_url:  "https://avatars.slack-edge.com/2017-04-04/164801788790_e3902f9310191c6ea722_72.png",
                 as_user: false,
                 text: "<!channel> "+msgtext+" (via <@"+user+">)"
@@ -245,11 +245,11 @@ controller.hears(['^invite.*\\|(.*)>'],
             if (body.error === "invalid_email") {
               bot.replyInThread(message, "The email is not valid.  Email: "+message.match[1]);
             } else if (body.error === "invalid_auth") {
-              bot.replyInThread(message, "The Governor doesn't have the rights to do that");
+              bot.replyInThread(message, "Michael Bot-Spall doesn't have the rights to do that");
             } else if (body.error === "already_in_team") {
               bot.replyInThread(message, "That person is already invited");
             } else {
-              bot.replyInThread(message, "The Governor got an error from slack: "+body.error);
+              bot.replyInThread(message, "Michael Bot-Spall got an error from slack: "+body.error);
             }
           }
         });
