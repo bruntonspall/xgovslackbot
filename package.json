@@ -9,7 +9,7 @@
     "pg": "^6.1.5"
   },
   "engines": {
-    "node": "7.5.0",
+    "node": "7.8.0",
     "npm": "4.1.2"
   },
   "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
