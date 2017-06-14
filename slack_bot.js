@@ -202,8 +202,8 @@ controller.hears(['^announce (.*)'],
               form: {
                 channel: channel.id,
                 token: process.env.apitoken,
-                username: "Michael Bot-Spall",
-                icon_url:  "https://avatars.slack-edge.com/2017-04-04/164801788790_e3902f9310191c6ea722_72.png",
+                username: bot.identity.name,
+                icon_url:  "https://avatars.slack-edge.com/2017-06-12/196465304149_07a2c870e7ee855d6413_48.png",
                 as_user: false,
                 text: "<!channel> "+msgtext+" (via <@"+user+">)"
               }
