@@ -24,7 +24,7 @@ describe('Formatting functions', function() {
     });
 
     it('should return for value 7267', function() {
-      assert.equal("2 hours, 1 minute, 7 seconds", format.uptime(7267));
+      assert.equal("2 hours, 1 minute, 7 seconds", format.uptime(7267.0034));
     });
 });
 });
