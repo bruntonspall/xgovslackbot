@@ -2,7 +2,10 @@
   "name": "xgovslackbot",
   "version": "1.0.0",
   "description": "Cross Government Slackbot",
-  "main": "slack_bot.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test mocha './**/*.spec.js'"
+  },
   "dependencies": {
     "botkit": "^0.5.2",
     "cfenv": "^1.0.4",
@@ -13,5 +16,8 @@
     "npm": "4.1.2"
   },
   "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^3.4.2"
+  }
 }

@@ -1,4 +1,7 @@
 
+const domains = require("./domains");
+const format = require("./format");
+
 if (!process.env.token) {
     console.log('Error: Specify token in environment');
     process.exit(1);
@@ -221,7 +224,7 @@ controller.hears(['^invite.*\\|(.*)>'],
   'direct_message,direct_mention', function(bot, message) {
     var email = message.match[1];
     controller.log("Got an invite for email: "+email);
-    if (!hasApprovedEmailDomain(email)) {
+    if (!domains.hasApprovedEmail(email)) {
       bot.replyInThread(message, "I only send invites to people with GOV.UK or otherwise approved email address");
       return;
     }
@@ -260,7 +263,7 @@ controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is 
         controller.log("Got asked for uptime");
 
         var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
+        var uptime = format.uptime(process.uptime());
 
         bot.replyInThread(message,
             ':robot_face: I am a bot named <@' + bot.identity.name +
@@ -341,27 +344,4 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
   });
 });
 
-function hasApprovedEmailDomain(email) {
-  if (email.match(".*\.gov\.uk$")) {
-    return true;
-  }
-  return false;
-}
 
-function formatUptime(uptime) {
-    var unit = 'second';
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'minute';
-    }
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'hour';
-    }
-    if (uptime != 1) {
-        unit = unit + 's';
-    }
-
-    uptime = uptime + ' ' + unit;
-    return uptime;
-}
