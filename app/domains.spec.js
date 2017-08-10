@@ -8,11 +8,10 @@ describe('Domain testing functions', function() {
         var addresses = [
             "foo@bar.gov.uk",
             "foo@baz.bar.bop.gov.uk",
-            "x@foobar.gov.uk",
-            "foo@naturalengland.org.uk"
+            "x@foobar.gov.uk"
         ]
         addresses.forEach(function(email) {
-            assert.ok(domains.hasApprovedEmail(email), email);
+            assert.equal(true, domains.hasApprovedEmail(email));
         })
     });
 
@@ -21,13 +20,11 @@ describe('Domain testing functions', function() {
         var addresses = [
             "foo@bar.gov",
             "foo@baz.bar.bop.uk",
-            "x@foobar.com",
-            "foo@notreallynaturalengland.org.uk"
+            "x@foobar.com"
         ]
         addresses.forEach(function(email) {
-            assert.ok(!domains.hasApprovedEmail(email), email);
+            assert.equal(false, domains.hasApprovedEmail(email));
         })
     });
-
 });
 });

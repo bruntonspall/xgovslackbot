@@ -1,12 +1,8 @@
-var approvedDomains = [
-  /.*@(.*\.)?gov.uk$/,
-  /.*@(.*\.)?naturalengland.org.uk$/
-]
-
 function hasApprovedEmail(email) {
-  return approvedDomains.reduce(function(previous, domain) {
-    return previous || domain.test(email)
-  }, false);
+  if (email.match(".*\.gov\.uk$")) {
+    return true;
+  }
+  return false;
 }
 
 module.exports.hasApprovedEmail = hasApprovedEmail
