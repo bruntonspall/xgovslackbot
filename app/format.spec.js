@@ -1,3 +1,4 @@
+/*jshint esversion:6*/
 var assert = require('assert');
 const format = require('./format');
 
