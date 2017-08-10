@@ -29,6 +29,5 @@ describe('Domain testing functions', function() {
             assert.ok(!domains.hasApprovedEmail(email), email);
         });
     });
-
 });
 });
