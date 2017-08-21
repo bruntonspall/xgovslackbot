@@ -1,5 +1,5 @@
 function hasApprovedEmail(email) {
-  if (email.match(".*\.gov\.uk$")) {
+  if (email.match("^[^@]+@(.*\.gov|naturalengland\.org)\.uk$")) {    
     return true;
   }
   return false;
