@@ -344,4 +344,27 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
   });
 });
 
-
+/**
+ * Welcome new joiners with a private message from xgovslackbot
+ */
+controller.on('team_join', function(bot, message) {
+    controller.log("User joined team: " + message.user);
+    bot.api.im.open({
+        user: message.user.id
+    }, (err, res) => {
+        if (err) {
+            bot.botkit.log('Failed to open IM with user', err)
+        }
+        console.log(res);
+        bot.startPrivateConversation({
+            user: message.user.id,
+            channel: res.channel.id
+        }, (err, convo) => {
+            convo.say(
+                // This is the message new joiners will get as a DM from the bot
+                `Welcome to ${slackDomain}.slack.com\n` +
+                `There are a couple of house rules, which I hope MBS will fill in here...`
+            );
+        });
+    })
+});
