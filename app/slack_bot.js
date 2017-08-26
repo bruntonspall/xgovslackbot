@@ -362,8 +362,11 @@ controller.on('team_join', function(bot, message) {
         }, (err, convo) => {
             convo.say(
                 // This is the message new joiners will get as a DM from the bot
-                `Welcome to ${slackDomain}.slack.com\n` +
-                `There are a couple of house rules, which I hope MBS will fill in here...`
+                `Hello ${message.user.name},\n` +
+                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `username_hmrc` or `username_dwp`.\n' +
+                `You can change it here: https://${slackDomain}.slack.com/account/settings#username\n` +
+                'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
+                `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
             );
         });
     })
