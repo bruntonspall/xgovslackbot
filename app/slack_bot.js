@@ -345,4 +345,30 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
   });
 });
 
-
+/**
+ * Welcome new joiners with a private message from xgovslackbot
+ */
+controller.on('team_join', function(bot, message) {
+    controller.log("User joined team: " + message.user);
+    bot.api.im.open({
+        user: message.user.id
+    }, (err, res) => {
+        if (err) {
+            bot.botkit.log('Failed to open IM with user', err)
+        }
+        console.log(res);
+        bot.startPrivateConversation({
+            user: message.user.id,
+            channel: res.channel.id
+        }, (err, convo) => {
+            convo.say(
+                // This is the message new joiners will get as a DM from the bot
+                `Hello ${message.user.name},\n` +
+                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `username_hmrc` or `username_dwp`.\n' +
+                `You can change it here: https://${slackDomain}.slack.com/account/settings#username\n` +
+                'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
+                `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
+            );
+        });
+    })
+});
