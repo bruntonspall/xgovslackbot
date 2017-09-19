@@ -1,3 +1,4 @@
+/*jshint esversion:6*/
 
 const domains = require("./domains");
 const format = require("./format");
@@ -34,15 +35,15 @@ if (appEnv.isLocal) {
       })
   });
 } else {
-  var pgEnv = appEnv.getServices();
+  var pgEnv = appEnv.getServices()["my-pg-service"];
   var controller = Botkit.slackbot({
       debug: false,
       storage: botkitStoragePostgres({
-        host: pgEnv["my-pg-service"]["credentials"]["host"],
-        user: pgEnv["my-pg-service"]["credentials"]["username"],
-        password: pgEnv["my-pg-service"]["credentials"]["password"],
-        port: pgEnv["my-pg-service"]["credentials"]["port"],
-        database: pgEnv["my-pg-service"]["credentials"]["name"],
+        host: pgEnv.credentials.host,
+        user: pgEnv.credentials.username,
+        password: pgEnv.credentials.password,
+        port: pgEnv.credentials.port,
+        database: pgEnv.credentials.name,
         ssl: true,
       })
   });
@@ -90,12 +91,12 @@ var bot = controller.spawn({
 function start_rtm() {
   bot.startRTM(function(err,bot,payload) {
     if (err) {
-      console.log('Failed to start RTM')
+      console.log('Failed to start RTM');
       return setTimeout(start_rtm, 60000);
     }
     console.log("RTM started!");
   });
-};
+}
 
 controller.on('rtm_close', function(bot, err) {
         start_rtm();
@@ -168,12 +169,12 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
               }, function(err, httpResponse, body) {
                 controller.log("Channel info: "+body);
                 body = JSON.parse(body);
-                if (body["ok"]) {
+                if (body.ok) {
                   channel = {
-                    id: body["channel"]["id"],
-                    name: body["channel"]["name"],
+                    id: body.channel.id,
+                    name: body.channel.name,
                     announce: on,
-                  }
+                  };
                   controller.storage.channels.save(channel, function(err, id) {
                     bot.replyInThread(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
                   });
@@ -189,14 +190,14 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
       });
     }
   });
-})
+});
 
 controller.hears(['^announce (.*)'],
   'direct_mention', function(bot, message) {
     /* Currently in channel, and only the #bot-test channel */
     var channel = message.channel;
     var msgtext = message.match[1];
-    var user = message.user
+    var user = message.user;
     controller.log("Got asked to announce in "+channel+" by "+user+" with text: "+msgtext);
     controller.storage.channels.get(message.channel, function (err, channel) {
       if (channel && channel.announce) {
@@ -215,9 +216,9 @@ controller.hears(['^announce (.*)'],
       } else {
         bot.replyInThread(message, "Only for approved channels");
       }
-    })
+    });
   }
-)
+);
 
 
 controller.hears(['^invite.*\\|(.*)>'],
@@ -281,12 +282,12 @@ controller.hears(["^superme (.*)"], "direct_message", function(bot, message) {
         user = {
           id: message.user,
           role: "super"
-        }
+        };
       }
       controller.storage.users.save(user, function(err, res) {
         bot.reply(message, "Set user "+user.id+" to "+user.role);
-      })
-    })
+      });
+    });
   } else {
     bot.reply(message, "Uh uh uh.  You didn't say the magic word!");
   }
@@ -298,7 +299,7 @@ controller.hears(["^what role am i"], 'direct_mention,direct_message', function(
     if (!user) {
       bot.replyInThread(message, "You are a user");
     } else {
-      bot.replyInThread(message, "You are a "+(user.role || "user"))
+      bot.replyInThread(message, "You are a "+(user.role || "user"));
     }
   });
 });
@@ -316,7 +317,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
             bot.replyInThread(message, "You can't set a user to that role");
             return;
           }
-          // else dropthrough
+          /* falls through */
         case "super":
           controller.storage.users.get(targetUser, function(err, user) {
             if (user) {
@@ -328,7 +329,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
               user = {
                 id: targetUser,
                 role: newRole
-              }
+              };
               controller.storage.users.save(user, function(err, res) {
                 bot.replyInThread(message, "Set user "+user.id+" to "+user.role);
               });
@@ -339,7 +340,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
           bot.replyInThread(message, "Your role of "+user.role+" is not recognised");
       }
     } else {
-      bot.replyInThread(message, "I don't know who you are I'm afraid")
+      bot.replyInThread(message, "I don't know who you are I'm afraid");
     }
   });
 });

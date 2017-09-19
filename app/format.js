@@ -1,8 +1,9 @@
+/*jshint esversion:6*/
 function uptime(uptime) {
     var hours = Math.floor(uptime / 3600);
-    var minutes = Math.floor((uptime - hours*3600) / 60)
-    var seconds = Math.floor(uptime - hours*3600 - minutes*60)
-    var uptimestring = ""
+    var minutes = Math.floor((uptime - hours*3600) / 60);
+    var seconds = Math.floor(uptime - hours*3600 - minutes*60);
+    var uptimestring = "";
     if (hours > 0) {
         uptimestring += hours + ' ' + 'hour';
         if (hours > 1) {
@@ -30,4 +31,4 @@ function uptime(uptime) {
     return uptimestring;
 }
 
-module.exports.uptime = uptime
+module.exports.uptime = uptime;
