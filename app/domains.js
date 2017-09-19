@@ -2,7 +2,8 @@
 
 var approvedDomains = [
   /.*@(.*\.)?gov.uk$/,
-  /.*@(.*\.)?naturalengland.org.uk$/
+  /.*@(.*\.)?naturalengland.org.uk$/,
+  /.*@(.*\.)?bankofengland.co.uk$/
 ];
 
 function hasApprovedEmail(email) {
