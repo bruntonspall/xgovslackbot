@@ -364,8 +364,8 @@ controller.on('team_join', function(bot, message) {
             convo.say(
                 // This is the message new joiners will get as a DM from the bot
                 `Hello ${message.user.name},\n` +
-                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `username_hmrc` or `username_dwp`.\n' +
-                `You can change it here: https://${slackDomain}.slack.com/account/settings#username\n` +
+                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
+                `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
                 'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
                 `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
             );
