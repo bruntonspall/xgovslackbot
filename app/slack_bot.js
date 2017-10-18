@@ -345,4 +345,89 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
   });
 });
 
+/**
+ * Welcome new joiners with a private message from xgovslackbot
+ */
+function startIntroductionConversation(user) {
+        bot.startPrivateConversation({
+            user: user
+        }, (err, convo) => {
+            convo.say(
+                // This is the message new joiners will get as a DM from the bot
+                `Hello, I'm ${bot.identity.name}, the Bot for this slack instance`);
+            convo.say(
+                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
+                `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
+                'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
+                `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
+            );
+          convo.say("I can respond to a variety of commands, ask me 'help' or 'commands' for a list");
+        });
+}
 
+controller.on('team_join', function(bot, message) {
+  controller.log("User joined team: " + message.user);
+  startIntroductionConversation(message.user.id);
+});
+
+controller.hears(["^welcome"], 'direct_mention,direct_message', function(bot, message) {
+  controller.log("Asked to welcome " + message.user);
+  startIntroductionConversation(message.user);
+});
+
+controller.hears(["^help","^commands"], "direct_message", function(bot, message) {
+  bot.startConversation(message, function(err,convo) {
+    TOPICS="I can tell you about:\nwelcome\ninvites\nannouncements\nroles\nWhich would you like to know more about? (say done when you are finished)";
+    convo.addQuestion(TOPICS, [
+      {
+        pattern: 'welcome',
+        callback: function(response, convo) {
+          convo.say("If you say welcome in this private chat, I'll repeat the welcome message");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: 'invites?',
+        callback: function(response, convo) {
+          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people on this list: https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js will get an invite, you can submit a pull request there to add a domain I don't know about");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "announcements?",
+        callback: function(response, convo) {
+          convo.say("I can perform channel wide announcements.  You need to mention me in the channel you want an announcement, and say @${bot.identity.name} announce my message here.\n" +
+            "I'll then repeat in channel something like \"@channel my message here\"\n" +
+            "Because this could be abused, it must be done in channel (so everyone sees you do it) and it has to be enabled for each channel");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "roles?",
+        callback: function(response, convo) {
+          convo.say("There are 3 user roles that I recognise, User, Admin and SuperAdmin\nIf you ask me 'what role am i?', I'll let you know\nAdmins can set a channel to allow announcements by telling me 'channel_announce #channel on' or 'off' to toggle the announce functions\nSuperAdmins can create admins by telling me 'set role for @name to admin'.");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "done",
+        callback: function(response, convo) {
+          convo.say("Ok, I hope I was helpful");
+          convo.next();
+        }
+      },
+      {
+        default: true,
+        callback: function(response, convo) {
+          convo.say("I didn't understand that, so I assume you are done");
+          convo.next();
+        }
+      }
+    ], {}, 'default');
+
+  });
+});

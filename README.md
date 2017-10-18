@@ -34,9 +34,31 @@ You'll also need a legacy API token, go get one from https://api.slack.com/custo
 ## Starting it up
 
 You'll want to run the following command
-```nodejs token=xoxb-... apitoken=xoxp-... slackdomain=... ./index.js```
+```
+nodejs token=xoxb-... apitoken=xoxp-... slackdomain=... ./index.js
+```
 
 Your bot should appear on the slack channel and you should be able to interact with him/her/it as expected
+
+## Using the Dockerfile
+
+If you want to use docker to build and run the bot, you can do:
+
+Build and test the code:
+
+```
+docker build -t xgovslackbot .
+```
+
+Run the built bot as is:
+```
+docker run -it -e "slackdomain=..." -e "token=xoxb-token" -e "apitoken=xoxp-apitoken" xgovslackbot nodejs ./index.js
+```
+
+Run the bot, but with local changes without rebuilding the base image:
+```
+docker run -it -e "slackdomain=..." -e "token=xoxb-token" -e "apitoken=xoxp-apitoken" --mount type=bind,source="$(pwd)/app",target=/usr/src/xgovslackbot/app xgovslackbot nodejs ./index.js
+```
 
 # Using the bot
 
