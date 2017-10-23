@@ -1,3 +1,7 @@
+/*jshint esversion:6*/
+
+const domains = require("./domains");
+const format = require("./format");
 
 if (!process.env.token) {
     console.log('Error: Specify token in environment');
@@ -31,15 +35,15 @@ if (appEnv.isLocal) {
       })
   });
 } else {
-  var pgEnv = appEnv.getServices();
+  var pgEnv = appEnv.getServices()["my-pg-service"];
   var controller = Botkit.slackbot({
       debug: false,
       storage: botkitStoragePostgres({
-        host: pgEnv["my-pg-service"]["credentials"]["host"],
-        user: pgEnv["my-pg-service"]["credentials"]["username"],
-        password: pgEnv["my-pg-service"]["credentials"]["password"],
-        port: pgEnv["my-pg-service"]["credentials"]["port"],
-        database: pgEnv["my-pg-service"]["credentials"]["name"],
+        host: pgEnv.credentials.host,
+        user: pgEnv.credentials.username,
+        password: pgEnv.credentials.password,
+        port: pgEnv.credentials.port,
+        database: pgEnv.credentials.name,
         ssl: true,
       })
   });
@@ -87,12 +91,12 @@ var bot = controller.spawn({
 function start_rtm() {
   bot.startRTM(function(err,bot,payload) {
     if (err) {
-      console.log('Failed to start RTM')
+      console.log('Failed to start RTM');
       return setTimeout(start_rtm, 60000);
     }
     console.log("RTM started!");
   });
-};
+}
 
 controller.on('rtm_close', function(bot, err) {
         start_rtm();
@@ -165,12 +169,12 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
               }, function(err, httpResponse, body) {
                 controller.log("Channel info: "+body);
                 body = JSON.parse(body);
-                if (body["ok"]) {
+                if (body.ok) {
                   channel = {
-                    id: body["channel"]["id"],
-                    name: body["channel"]["name"],
+                    id: body.channel.id,
+                    name: body.channel.name,
                     announce: on,
-                  }
+                  };
                   controller.storage.channels.save(channel, function(err, id) {
                     bot.replyInThread(message, "Got it, "+channel.name+" ("+id+") is now set for announce = "+on);
                   });
@@ -186,14 +190,14 @@ controller.hears(['^channel_announce <#(.*)\\|.*> o(n|f)f?'], 'direct_mention', 
       });
     }
   });
-})
+});
 
 controller.hears(['^announce (.*)'],
   'direct_mention', function(bot, message) {
     /* Currently in channel, and only the #bot-test channel */
     var channel = message.channel;
     var msgtext = message.match[1];
-    var user = message.user
+    var user = message.user;
     controller.log("Got asked to announce in "+channel+" by "+user+" with text: "+msgtext);
     controller.storage.channels.get(message.channel, function (err, channel) {
       if (channel && channel.announce) {
@@ -212,16 +216,16 @@ controller.hears(['^announce (.*)'],
       } else {
         bot.replyInThread(message, "Only for approved channels");
       }
-    })
+    });
   }
-)
+);
 
 
 controller.hears(['^invite.*\\|(.*)>'],
   'direct_message,direct_mention', function(bot, message) {
     var email = message.match[1];
     controller.log("Got an invite for email: "+email);
-    if (!hasApprovedEmailDomain(email)) {
+    if (!domains.hasApprovedEmail(email)) {
       bot.replyInThread(message, "I only send invites to people with GOV.UK or otherwise approved email address");
       return;
     }
@@ -260,7 +264,7 @@ controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is 
         controller.log("Got asked for uptime");
 
         var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
+        var uptime = format.uptime(process.uptime());
 
         bot.replyInThread(message,
             ':robot_face: I am a bot named <@' + bot.identity.name +
@@ -278,12 +282,12 @@ controller.hears(["^superme (.*)"], "direct_message", function(bot, message) {
         user = {
           id: message.user,
           role: "super"
-        }
+        };
       }
       controller.storage.users.save(user, function(err, res) {
         bot.reply(message, "Set user "+user.id+" to "+user.role);
-      })
-    })
+      });
+    });
   } else {
     bot.reply(message, "Uh uh uh.  You didn't say the magic word!");
   }
@@ -295,7 +299,7 @@ controller.hears(["^what role am i"], 'direct_mention,direct_message', function(
     if (!user) {
       bot.replyInThread(message, "You are a user");
     } else {
-      bot.replyInThread(message, "You are a "+(user.role || "user"))
+      bot.replyInThread(message, "You are a "+(user.role || "user"));
     }
   });
 });
@@ -313,7 +317,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
             bot.replyInThread(message, "You can't set a user to that role");
             return;
           }
-          // else dropthrough
+          /* falls through */
         case "super":
           controller.storage.users.get(targetUser, function(err, user) {
             if (user) {
@@ -325,7 +329,7 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
               user = {
                 id: targetUser,
                 role: newRole
-              }
+              };
               controller.storage.users.save(user, function(err, res) {
                 bot.replyInThread(message, "Set user "+user.id+" to "+user.role);
               });
@@ -336,32 +340,94 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
           bot.replyInThread(message, "Your role of "+user.role+" is not recognised");
       }
     } else {
-      bot.replyInThread(message, "I don't know who you are I'm afraid")
+      bot.replyInThread(message, "I don't know who you are I'm afraid");
     }
   });
 });
 
-function hasApprovedEmailDomain(email) {
-  if (email.match(".*\.gov\.uk$")) {
-    return true;
-  }
-  return false;
+/**
+ * Welcome new joiners with a private message from xgovslackbot
+ */
+function startIntroductionConversation(user) {
+        bot.startPrivateConversation({
+            user: user
+        }, (err, convo) => {
+            convo.say(
+                // This is the message new joiners will get as a DM from the bot
+                `Hello, I'm ${bot.identity.name}, the Bot for this slack instance`);
+            convo.say(
+                'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
+                `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
+                'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
+                `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
+            );
+          convo.say("I can respond to a variety of commands, ask me 'help' or 'commands' for a list");
+        });
 }
 
-function formatUptime(uptime) {
-    var unit = 'second';
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'minute';
-    }
-    if (uptime > 60) {
-        uptime = uptime / 60;
-        unit = 'hour';
-    }
-    if (uptime != 1) {
-        unit = unit + 's';
-    }
+controller.on('team_join', function(bot, message) {
+  controller.log("User joined team: " + message.user);
+  startIntroductionConversation(message.user.id);
+});
 
-    uptime = uptime + ' ' + unit;
-    return uptime;
-}
+controller.hears(["^welcome"], 'direct_mention,direct_message', function(bot, message) {
+  controller.log("Asked to welcome " + message.user);
+  startIntroductionConversation(message.user);
+});
+
+controller.hears(["^help","^commands"], "direct_message", function(bot, message) {
+  bot.startConversation(message, function(err,convo) {
+    TOPICS="I can tell you about:\nwelcome\ninvites\nannouncements\nroles\nWhich would you like to know more about? (say done when you are finished)";
+    convo.addQuestion(TOPICS, [
+      {
+        pattern: 'welcome',
+        callback: function(response, convo) {
+          convo.say("If you say welcome in this private chat, I'll repeat the welcome message");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: 'invites?',
+        callback: function(response, convo) {
+          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people on this list: https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js will get an invite, you can submit a pull request there to add a domain I don't know about");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "announcements?",
+        callback: function(response, convo) {
+          convo.say("I can perform channel wide announcements.  You need to mention me in the channel you want an announcement, and say @${bot.identity.name} announce my message here.\n" +
+            "I'll then repeat in channel something like \"@channel my message here\"\n" +
+            "Because this could be abused, it must be done in channel (so everyone sees you do it) and it has to be enabled for each channel");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "roles?",
+        callback: function(response, convo) {
+          convo.say("There are 3 user roles that I recognise, User, Admin and SuperAdmin\nIf you ask me 'what role am i?', I'll let you know\nAdmins can set a channel to allow announcements by telling me 'channel_announce #channel on' or 'off' to toggle the announce functions\nSuperAdmins can create admins by telling me 'set role for @name to admin'.");
+          convo.repeat();
+          convo.next();
+        }
+      },
+      {
+        pattern: "done",
+        callback: function(response, convo) {
+          convo.say("Ok, I hope I was helpful");
+          convo.next();
+        }
+      },
+      {
+        default: true,
+        callback: function(response, convo) {
+          convo.say("I didn't understand that, so I assume you are done");
+          convo.next();
+        }
+      }
+    ], {}, 'default');
+
+  });
+});

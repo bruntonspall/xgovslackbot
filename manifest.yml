@@ -1,6 +1,6 @@
 ---
 applications:
 - name: xgovslackbot
-  command: node slack_bot.js
+  command: node index.js
   memory: 256M
   buildpack: nodejs_buildpack
