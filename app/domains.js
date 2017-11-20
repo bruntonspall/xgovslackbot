@@ -1,13 +1,28 @@
 /*jshint esversion:6*/
 
 var approvedDomains = [
-  /.*@(.*\.)?gov.uk$/,
-  /.*@(.*\.)?naturalengland.org.uk$/,
+  /.*@(.*\.)?acas.org.uk$/,
   /.*@(.*\.)?bankofengland.co.uk$/,
+  /.*@(.*\.)?bl.uk$/,
+  /.*@(.*\.)?bmtdsl.co.uk$/,
   /.*@(.*\.)?cqc.org.uk$/,
+  /.*@(.*\.)?ddc-mod.org$/,
+  /.*@(.*\.)?digital.nhs.uk$/,
+  /.*@(.*\.)?gov.scot$/,
+  /.*@(.*\.)?gov.uk$/,
+  /.*@(.*\.)?hmcts.net$/,
+  /.*@(.*\.)?hs2.org.uk$/,
+  /.*@(.*\.)?marinemanagement.org.uk$/,
+  /.*@(.*\.)?mod.uk$/,
+  /.*@(.*\.)?naturalengland.org.uk$/,
   /.*@(.*\.)?nhs.net$/,
+  /.*@(.*\.)?nhsbt.nhs.uk$/,
+  /.*@(.*\.)?nice.org.uk$/,
+  /.*@(.*\.)?os.uk$/,
+  /.*@(.*\.)?parliament.uk$/,
   /.*@(.*\.)?sepa.org.uk$/,
-  /.*@(.*\.)?os.uk$/
+  /.*@(.*\.)?slc.co.uk$/,
+  /.*@(.*\.)?stfc.ac.uk$/
 ];
 
 function hasApprovedEmail(email) {
