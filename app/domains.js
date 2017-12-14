@@ -10,6 +10,7 @@ var approvedDomains = [
   /.*@(.*\.)?digital.nhs.uk$/,
   /.*@(.*\.)?gov.scot$/,
   /.*@(.*\.)?gov.uk$/,
+  /.*@(.*\.)?hee.nhs.uk$/,
   /.*@(.*\.)?hmcts.net$/,
   /.*@(.*\.)?hs2.org.uk$/,
   /.*@(.*\.)?marinemanagement.org.uk$/,
