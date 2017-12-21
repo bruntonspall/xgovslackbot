@@ -3,13 +3,12 @@ services:
 script:
 - docker build -t xgovslackbot .
 deploy:
-  matrix:
-  - provider: cloudfoundry
-    username: michael.bruntonspall@digital.cabinet-office.gov.uk
-    api: https://api.cloud.service.gov.uk
-    organization: cross-government-slack
-    space: sandbox
-    password:
-      secure: NMnKL/8rcCTgTju0k/6aiAvJtVn3qj/3QsyjT5R9HsUY5KEQZnzV0eOGBvUTYPDqySrmQYX0dC5ZPKnjyBDJuFyoY0u1SY9kcOCXXzECx+ES5KJngdrdUG3T4MbSLWK3pRkb1c3mDjosGin/NKkJRcLV9Gx10UgKiVLgwlalIJJZaA4gV7sDcImSXbwlWMcj9zh6s8TUuRXouYWYnxlUTVPuJwmhufmyWq8FIDRDqYkMnRAYa4vofGTxdrqe6ruLodGDYaIXGZNRZZygqcoB6IrzTOvWt6jNuRXnRgi6zupjTTnUeD5P+GiIT+gNKm8k9PIZHcouY0glRIgOihPRxpwvW91M4k8Kiuk2C2MnsiyXVElnlKyUruwLcV4hFLduUZZoFiqSTz8rvPYnvLoGPVH5M3LdNCg4jigytnmUanefMam9gPQe7xGIJx4NRXyIhqb076RFSQrisF0YdbB/xkmWIFht+CAsjz2dLgKD8cSXO5qfwN/8SqdiH/Lj2D7a3n/IcQfJ+t0bjHI8JZ9tEczaiUfX5ri7WqnFSbujMFOtx5K49Qx7N6vQEgvtClH0uJ+u4k6Qwc9Qf7eWerY3tC8N+uGjcDDlgYutjR0fsoX/Su8/KDbte6T5MuhYwjAt2IGb9cGJXhWf0rWuHGGBS4DPsUGshaeDXAXd6tG5I0c=
-    on:
-      branch: master
+  provider: cloudfoundry
+  username: michael.bruntonspall@digital.cabinet-office.gov.uk
+  api: https://api.cloud.service.gov.uk
+  organization: cross-government-slack
+  space: sandbox
+  password:
+    secure: NU0SKikkfRp5MQW6fzU6fdaNTA/g5p42ly9tSfIiyHPdBmYKeJ+dPcuPj+vJTSKw6xKACYj5dx3q6pn0qAaunGV16zxUJjiuywCPFs8Fc0ZTSD5i7XR9rReW2z20Gt6lOkf1664JpioN5fPeKK8mu35MXrGFqfvcbQvRajJ5Fu/hM/Sv1QtEpf8FbAhEi3gpeXt7n3IrHaJo5Z9M2alACAU2grgdWFODIMKeLOXAiGGTX02jmeyD54Hwn000Xxo4afI3BeExtXJ0yKjJpCZ9eSQJ1a3gv+94ZE7u0M/PG7GhzpdSvjS7GWiJfAJ321B4gAVhb+2X58Wr1C23AB86p+KFTS7B3ehrPxgNHb4IQoafAieWIAsGvb7tfG3garVfc3i/ArKtYRGd43/1Cqj/bnO95xbJHRxlnRLuhxTk/0bvfXKeArup8x3AKYWnu7JnFI4PIoJp8MNVKtLQ3Tqkw0o/xuQ7eS/jzQ4g76nRtof5WqeKW4C7aZISkPUMaVeCqXugr9qwKerru7aSOd+JNejl0doH0tSi4aLgcRcjjcyE3hgSCebbWKXSDPrGfaUpwm1aRyrWBfoJ9pPmgFoyn4qLwYXY0R9nL5Sj9oX6c+rh8CCXOcRs/Ac1lNV/TIToArTahPDxJud6fkWP0F1fX0YouLVKZDiCntBfA0l7c7w=
+  on:
+    branch: master
