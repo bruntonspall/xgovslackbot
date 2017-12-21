@@ -2,4 +2,4 @@ services:
   - docker
 
 script:
-  - docker built -t xgovslackbot .
+  - docker build -t xgovslackbot .
