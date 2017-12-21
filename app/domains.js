@@ -2,6 +2,7 @@
 
 var approvedDomains = [
   /.*@(.*\.)?acas.org.uk$/,
+  /.*@(.*\.)?apha.gsi.gov.uk$/,
   /.*@(.*\.)?bankofengland.co.uk$/,
   /.*@(.*\.)?bl.uk$/,
   /.*@(.*\.)?bmtdsl.co.uk$/,
