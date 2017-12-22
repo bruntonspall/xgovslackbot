@@ -1,0 +1,14 @@
+services:
+- docker
+script:
+- docker build -t xgovslackbot .
+deploy:
+  provider: cloudfoundry
+  username: xgovslack-ci@googlegroups.com
+  api: https://api.cloud.service.gov.uk
+  organization: cross-government-slack
+  space: sandbox
+  password:
+    secure: pc91imty1F78ExvoDbLNVZiYeuyV9QqvfbuU1CKBgSZuzBAWMMP8LJOgUdcN1YKh7jDSNEkjMjsdPxUqZGmdvm/ffOSKStX3nKhdo2JGHDRH7uxMGb/R4pEaMgYcUJyil82Y3chY3TcGcxiyHZmRKyLsQANdP9CBcWMwacFbT1SBHyhNDBOC5bITdCcF68sC8RxEHQhqLBumGBctV2O17sUcwfPqNV5JExtexxtuVJHpdWH6LDK9U+6mtmN/vXJj8rT3X/wPTqu+rfRENrAvXDEEdVFRs1yaG22vvdcrs7NKBZdVaw21hzYY/C1q9MVc3Bubc+70ZHpiqNru41EhA7cg2oAaKz4Vgwk4s4OHsAiJ3HzWlWRggo02QFY8C1aNb8BHsVOR3i3nn1CLTiT6npTCx8PzRm1jWjq0WxPOGWqBYGePbNpQjavo+O2dUuNXis0JfgHeXFNz4OVI2dA2VAjWbAJkArF8ucC0yeDX5yDYH0c/HUvR/hp3WxgQERnn57x3QKLfUsu2u/BMtFghnARbr4i+zbCzrwuG2nmiPvy2iyE1ERwOIVxN/D4omTKWC55kjgsV3OUof1EWcjf2jSC7l1Q+ZHidv/ZI1ToBddVr3HrnziA3LXmH3cgfWuxR9meEs3EpHly5Dm6spFBpxu0DPUOjDVinECXdWxpCNyg=
+  on:
+    branch: master
