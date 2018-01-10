@@ -23,7 +23,8 @@ var approvedDomains = [
   /.*@(.*\.)?parliament.uk$/,
   /.*@(.*\.)?sepa.org.uk$/,
   /.*@(.*\.)?slc.co.uk$/,
-  /.*@(.*\.)?stfc.ac.uk$/
+  /.*@(.*\.)?stfc.ac.uk$/,
+  /.*@(.*\.)?hertfordshire.gov.uk$/
 ];
 
 function hasApprovedEmail(email) {
