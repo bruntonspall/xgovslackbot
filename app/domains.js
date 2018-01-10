@@ -32,4 +32,9 @@ function hasApprovedEmail(email) {
   }, false);
 }
 
+function approvedDomainsString() {
+  return approvedDomains.slice().sort().join(', ');
+}
+
 module.exports.hasApprovedEmail = hasApprovedEmail;
+module.exports.approvedDomainsString = approvedDomainsString;

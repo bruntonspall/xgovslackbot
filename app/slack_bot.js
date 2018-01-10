@@ -390,7 +390,7 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
       {
         pattern: 'invites?',
         callback: function(response, convo) {
-          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people on this list: https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js will get an invite, you can submit a pull request there to add a domain I don't know about");
+          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people with domains in the following list will get an invite: " + domains.approvedDomainsString() + ".\nYou can submit a pull request to change the list in https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js to add a domain I don't know about");
           convo.repeat();
           convo.next();
         }
