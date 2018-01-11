@@ -13,6 +13,7 @@ var Botkit = require('botkit');
 var os = require('os');
 var request = require('request');
 var cfenv = require("cfenv");
+var uuidv4 = require("uuid/v4");
 
 if (!process.env.slackDomain) {
   var slackDomain = "ukgovernmentdigital";
@@ -21,6 +22,8 @@ if (!process.env.slackDomain) {
 }
 
 var secretWord = process.env.secretWord || "abracadabra";
+
+var instanceId = uuidv4();
 
 var appEnv = cfenv.getAppEnv();
 if (appEnv.isLocal) {
@@ -100,6 +103,25 @@ function start_rtm() {
 
 controller.on('rtm_close', function(bot, err) {
         start_rtm();
+});
+
+function shutDown() {
+  console.log("Shutting down");
+  process.exit();
+}
+
+controller.on('rtm_open', function(bot) {
+  console.log("Claiming instance lock in postgres (id " + instanceId + ")");
+  controller.storage.instance.claim(instanceId, function(err, currentInstanceId) {
+    if (err) {
+      console.log("Couldn't claim instance lock in database: " + err);
+      shutDown();
+    }
+    if (instanceId !== currentInstanceId) {
+      console.log("Instance lock claimed by another process: " + currentInstanceId);
+      shutDown();
+    }
+  });
 });
 
 start_rtm();
