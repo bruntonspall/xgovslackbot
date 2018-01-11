@@ -110,16 +110,40 @@ function shutDown() {
   process.exit();
 }
 
+function reportInBotsChannel(message, cb) {
+  return request.post({
+    url: `https://${slackDomain}.slack.com/api/chat.postMessage`,
+    form: {
+      channel: '#bots',
+      token: process.env.apitoken,
+      username: bot.identity.name,
+      icon_url:  "https://avatars.slack-edge.com/2017-06-12/196465304149_07a2c870e7ee855d6413_48.png",
+      as_user: false,
+      text: message
+    }
+  }, function(err, httpResponse, body) {
+    if (cb) {
+      body = JSON.parse(body);
+      if (body.ok) {
+        cb(undefined, body)
+      } else {
+        cb(body)
+      }
+    }
+  });
+}
+
 controller.on('rtm_open', function(bot) {
   console.log("Claiming instance lock in postgres (id " + instanceId + ")");
   controller.storage.instance.claim(instanceId, function(err, currentInstanceId) {
     if (err) {
       console.log("Couldn't claim instance lock in database: " + err);
-      shutDown();
-    }
-    if (instanceId !== currentInstanceId) {
+      reportInBotsChannel("Instance " + instanceId + " encountered an error trying to claim lock: " + err, (err, body) => shutDown());
+    } else if (instanceId !== currentInstanceId) {
       console.log("Instance lock claimed by another process: " + currentInstanceId);
-      shutDown();
+      reportInBotsChannel("Instance " + instanceId + " shutting down, lock claimed by " + currentInstanceId, (err, body) => shutDown());
+    } else {
+      reportInBotsChannel("Instance " + instanceId + " has claimed lock")
     }
   });
 });
