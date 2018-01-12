@@ -1,7 +1,11 @@
 services:
 - docker
+- postgresql
+before_script:
+- psql -c 'create database xgovslackbot;' -U postgres
+- psql -c "create user xgovslackbot with password 'xgovslackbot';" -U postgres
 script:
-- docker build -t xgovslackbot .
+- docker build --build-arg BOTKIT_STORAGE_POSTGRES_HOST="$(/sbin/ip route|awk '/default/ { print $3 }')" -t xgovslackbot .
 deploy:
   provider: cloudfoundry
   username: xgovslack-ci@googlegroups.com

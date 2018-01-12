@@ -8,14 +8,14 @@ var pg = require('pg');
 
 module.exports = function(srcConfig) {
   config = {
-    user: srcConfig.user || process.env.BOTKIT_STORAGE_POSTGRES_USER || 'botkit',
-    database: srcConfig.database || process.env.BOTKIT_STORAGE_POSTGRES_DATABASE || 'botkit',
-    password: srcConfig.password || process.env.BOTKIT_STORAGE_POSTGRES_PASSWORD || 'botkit',
-    host: srcConfig.host || process.env.BOTKIT_STORAGE_POSTGRES_HOST || 'localhost',
-    port: srcConfig.port || process.env.BOTKIT_STORAGE_POSTGRES_PORT || '5432',
-    max: srcConfig.maxClients || process.env.BOTKIT_STORAGE_POSTGRES_MAX_CLIENTS || '10',
-    idleTimeoutMillis: srcConfig.idleTimeoutMillis || process.env.BOTKIT_STORAGE_POSTGRES_IDLE_TIMEOUT_MILLIS || '30000',
-    ssl: srcConfig.ssl || process.env.BOTKIT_STORAGE_POSTGRES_SSL || false,
+    user: process.env.BOTKIT_STORAGE_POSTGRES_USER || srcConfig.user || 'botkit',
+    database: process.env.BOTKIT_STORAGE_POSTGRES_DATABASE || srcConfig.database || 'botkit',
+    password: process.env.BOTKIT_STORAGE_POSTGRES_PASSWORD || srcConfig.password || 'botkit',
+    host: process.env.BOTKIT_STORAGE_POSTGRES_HOST || srcConfig.host || 'localhost',
+    port: process.env.BOTKIT_STORAGE_POSTGRES_PORT || srcConfig.port || '5432',
+    max: process.env.BOTKIT_STORAGE_POSTGRES_MAX_CLIENTS || srcConfig.maxClients || '10',
+    idleTimeoutMillis: process.env.BOTKIT_STORAGE_POSTGRES_IDLE_TIMEOUT_MILLIS || srcConfig.idleTimeoutMillis || '30000',
+    ssl: process.env.BOTKIT_STORAGE_POSTGRES_SSL || srcConfig.ssl || false,
   };
 
   function initClient(config) {
