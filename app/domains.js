@@ -13,6 +13,7 @@ var approvedDomains = [
   'hee.nhs.uk',
   'hmcts.net',
   'hs2.org.uk',
+  'london.gov.uk',
   'marinemanagement.org.uk',
   'mod.uk',
   'naturalengland.org.uk',
