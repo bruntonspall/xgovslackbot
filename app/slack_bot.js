@@ -24,6 +24,7 @@ if (!process.env.slackDomain) {
 var secretWord = process.env.secretWord || "abracadabra";
 
 var instanceId = uuidv4();
+var started_claim = false;
 
 var appEnv = cfenv.getAppEnv();
 if (appEnv.isLocal) {
@@ -134,6 +135,8 @@ function reportInBotsChannel(message, cb) {
 }
 
 controller.on('rtm_open', function(bot) {
+  if (started_claim) return;
+  started_claim = true;
   console.log("Claiming instance lock in postgres (id " + instanceId + ")");
   controller.storage.instance.claim(instanceId, function(err, currentInstanceId) {
     if (err) {
