@@ -308,6 +308,17 @@ controller.hears(['^invite.*\\|(.*)>'],
         });
   });
 
+controller.hears(['^allowed domains$', '^how to invite$', '^join this Slack$'], function(bot, message) {
+  controller.log("User asking how to invite other people to this Slack.");
+   var name = message.match[1]
+   
+      bot.replyInThread(message, "Hi! I can invite a new user for you if they have an email on one of these domains:" + 
+      " https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js.\n Use the following format in this thread or in a DM to me:" + 
+      " \n > @michaelbotspall invite example@email.com"));
+    }
+  });
+});
+
 controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is your name$'],
     'direct_message,direct_mention,mention', function(bot, message) {
         controller.log("Got asked for uptime");
