@@ -24,6 +24,7 @@ var approvedDomains = [
   'sepa.org.uk',
   'slc.co.uk',
   'stfc.ac.uk'
+  'cma.gov.uk'
 ]
 
 function hasApprovedEmail(email) {
