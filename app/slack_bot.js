@@ -115,7 +115,7 @@ function reportInBotsChannel(message, cb) {
   return request.post({
     url: `https://${slackDomain}.slack.com/api/chat.postMessage`,
     form: {
-      channel: '#bots',
+      channel: '#bots-output',
       token: process.env.apitoken,
       username: bot.identity.name,
       icon_url:  "https://avatars.slack-edge.com/2017-06-12/196465304149_07a2c870e7ee855d6413_48.png",
