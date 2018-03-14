@@ -13,6 +13,7 @@ var Botkit = require('botkit');
 var os = require('os');
 var request = require('request');
 var cfenv = require("cfenv");
+var uuidv4 = require("uuid/v4");
 
 if (!process.env.slackDomain) {
   var slackDomain = "ukgovernmentdigital";
@@ -21,6 +22,9 @@ if (!process.env.slackDomain) {
 }
 
 var secretWord = process.env.secretWord || "abracadabra";
+
+var instanceId = uuidv4();
+var started_claim = false;
 
 var appEnv = cfenv.getAppEnv();
 if (appEnv.isLocal) {
@@ -92,14 +96,59 @@ function start_rtm() {
   bot.startRTM(function(err,bot,payload) {
     if (err) {
       console.log('Failed to start RTM');
-      return setTimeout(start_rtm, 60000);
+      return setTimeout(shutDown, 60000);
     }
     console.log("RTM started!");
   });
 }
 
 controller.on('rtm_close', function(bot, err) {
-        start_rtm();
+  shutDown();
+});
+
+function shutDown() {
+  console.log("Shutting down");
+  process.exit();
+}
+
+function reportInBotsChannel(message, cb) {
+  return request.post({
+    url: `https://${slackDomain}.slack.com/api/chat.postMessage`,
+    form: {
+      channel: '#bots-output',
+      token: process.env.apitoken,
+      username: bot.identity.name,
+      icon_url:  "https://avatars.slack-edge.com/2017-06-12/196465304149_07a2c870e7ee855d6413_48.png",
+      as_user: false,
+      text: message
+    }
+  }, function(err, httpResponse, body) {
+    if (cb) {
+      body = JSON.parse(body);
+      if (body.ok) {
+        cb(undefined, body)
+      } else {
+        cb(body)
+      }
+    }
+  });
+}
+
+controller.on('rtm_open', function(bot) {
+  if (started_claim) return;
+  started_claim = true;
+  console.log("Claiming instance lock in postgres (id " + instanceId + ")");
+  controller.storage.instance.claim(instanceId, function(err, currentInstanceId) {
+    if (err) {
+      console.log("Couldn't claim instance lock in database: " + err);
+      reportInBotsChannel("Instance " + instanceId + " encountered an error trying to claim lock: " + err, (err, body) => shutDown());
+    } else if (instanceId !== currentInstanceId) {
+      console.log("Instance lock claimed by another process: " + currentInstanceId);
+      reportInBotsChannel("Instance " + instanceId + " shutting down, lock claimed by " + currentInstanceId, (err, body) => shutDown());
+    } else {
+      reportInBotsChannel("Instance " + instanceId + " has claimed lock")
+    }
+  });
 });
 
 start_rtm();
@@ -390,7 +439,7 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
       {
         pattern: 'invites?',
         callback: function(response, convo) {
-          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people on this list: https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js will get an invite, you can submit a pull request there to add a domain I don't know about");
+          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people with domains in the following list will get an invite: " + domains.approvedDomainsString() + ".\nYou can submit a pull request to change the list in https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js to add a domain I don't know about");
           convo.repeat();
           convo.next();
         }

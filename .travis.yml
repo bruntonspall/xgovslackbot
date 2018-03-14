@@ -1,0 +1,18 @@
+services:
+- docker
+- postgresql
+before_script:
+- psql -c 'create database xgovslackbot;' -U postgres
+- psql -c "create user xgovslackbot with password 'xgovslackbot';" -U postgres
+script:
+- docker build --build-arg BOTKIT_STORAGE_POSTGRES_HOST="$(/sbin/ip route|awk '/default/ { print $3 }')" -t xgovslackbot .
+deploy:
+  provider: cloudfoundry
+  username: xgovslack-ci@googlegroups.com
+  api: https://api.cloud.service.gov.uk
+  organization: cross-government-slack
+  space: sandbox
+  password:
+    secure:  "vvNPk8ujzfZz97w40VVglRvgOr2h2iGlnFRldDhPmDbrKSzuv09YRdZyr3GcaJKGbU2MTatH9xKabp4koHMQPbOZ8JRVUz5Iu71ZXjz2co6vVVqndBZIy+B6smaSL6TuFH1DYQ5ydFb1sMF28BVq2K0anmBx9tVioUdqY3bSGp5oQIas1Yt76I7gD/b2S98IhEH2XzJilF8Dq8WeFC5xKLXFtwfNQJPQNfXb6gDOFFa3D3vbBCK/fgpY9zYhN35gkWLYXNA8fyJ4k8Ffsp8Ya4FhsKuKzluskIRtBRdmfmtqCDGxpcPetoLuPc1fMayHC4uTtPpWqCaiMLC5zMsjSli8n990SgNSHqb3DanYd6p6Zr9hbYjsi8f8cJyVnSBF2KMTrWND6ZWugRWs1DLTioPJ8KLaTfzR7ZaDIdqVwFQwcBke9z/wxLvzujYwSYaLIVeiD7ean8Ai6oKd18zyfiFaEFQ/bP61IyE2GadMyWTgRVaQVK/rJybS+VCO8A4S/XWbZLq5SqTqHT7XtTDZZY5Qagy4Y4bN+K2w0Vxx/bZy455vj+t9HxpiJB16dasofzv23hwqGJvnemZhXkfUuW3GwqEWMtZdSAgJcF/NFi43Y25zq8JXFZoJhbXuP8NJoN/K3EG3IakGwzWC83AX9XE5C3dEBLwdAJPtsw7VXY8="
+  on:
+    branch: master

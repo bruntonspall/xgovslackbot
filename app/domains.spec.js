@@ -29,5 +29,12 @@ describe('Domain testing functions', function() {
             assert.ok(!domains.hasApprovedEmail(email), email);
         });
     });
-});
+  });
+
+  describe('approvedDomainsString()', function() {
+    it('should be a comma separated list', function() {
+      var domainsString = domains.approvedDomainsString();
+      assert.ok(domainsString.indexOf(', ') > 0, domainsString);
+    });
+  });
 });
