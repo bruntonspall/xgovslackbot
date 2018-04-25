@@ -404,6 +404,7 @@ function startIntroductionConversation(user) {
             convo.say(
                 // This is the message new joiners will get as a DM from the bot
                 `Hello, I'm ${bot.identity.name}, the Bot for this slack instance`);
+                'By entering You are accepting https://slack.com/terms-of-service'
             convo.say(
                 'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
                 `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
