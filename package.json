@@ -4,22 +4,23 @@
   "description": "Cross Government Slackbot",
   "main": "index.js",
   "scripts": {
-    "test": "mocha './**/*.spec.js'",
-    "start": "nodejs ./app/slack_bot.js"
+    "test": "NODE_ENV=test mocha './app/**/*.spec.js'",
+    "start": "NODE_ENV=test nodejs ./index.js"
   },
   "dependencies": {
-    "botkit": "^0.5.2",
+    "botkit": "^0.6.14",
     "cfenv": "^1.0.4",
     "pg": "^6.1.5",
     "uuid": "^3.1.0"
   },
   "engines": {
-    "node": "9.4.0",
+    "node": "9.9.0",
     "npm": "4.1.2"
   },
   "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^3.4.2"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
   }
 }

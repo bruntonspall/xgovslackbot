@@ -478,5 +478,11 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
       }
     ], {}, 'default');
 
+    /* timeout the conversation after 2 minutes of inactivity */
+    convo.setTimeout(1000*120);
+    convo.onTimeout(function(convo) {
+      convo.say("You've been quiet for a while. I'm going to assume that you have what you need for now. Bye!");
+      convo.next();
+    });
   });
 });
