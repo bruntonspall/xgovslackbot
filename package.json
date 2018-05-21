@@ -4,8 +4,8 @@
   "description": "Cross Government Slackbot",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha './**/*.spec.js'",
-    "start": "NODE_ENV=test nodejs ./index.js"
+    "test": "mocha './**/*.spec.js'",
+    "start": "nodejs ./app/slack_bot.js"
   },
   "dependencies": {
     "botkit": "^0.5.2",
