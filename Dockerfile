@@ -6,4 +6,4 @@ ENV token=xoxb-token apitoken=xoxp-apitoken slackdomain=mbs-bot-test.slack.com
 copy . /usr/src/xgovslackbot
 workdir /usr/src/xgovslackbot
 run npm install --dev
-run BOTKIT_STORAGE_POSTGRES_HOST=$BOTKIT_STORAGE_POSTGRES_HOST npm test .
+run BOTKIT_STORAGE_POSTGRES_HOST=$BOTKIT_STORAGE_POSTGRES_HOST npm test
