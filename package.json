@@ -4,7 +4,7 @@
   "description": "Cross Government Slackbot",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha './**/*.spec.js'",
+    "test": "NODE_ENV=test mocha './app/**/*.spec.js'",
     "start": "NODE_ENV=test nodejs ./index.js"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
   "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^3.4.2"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
   }
 }
