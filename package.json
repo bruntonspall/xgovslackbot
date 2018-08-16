@@ -14,7 +14,7 @@
     "uuid": "^3.1.0"
   },
   "engines": {
-    "node": "9.9.0",
+    "node": "9.11.2",
     "npm": "4.1.2"
   },
   "author": "michael.brunton-spall@digital.cabinet-office.gov.uk",
