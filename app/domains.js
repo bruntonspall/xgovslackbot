@@ -15,6 +15,7 @@ var approvedDomains = [
   'highwaysengland.co.uk',
   'hmcts.net',
   'hs2.org.uk',
+  'jncc.gov.uk',
   'marinemanagement.org.uk',
   'mod.uk',
   'naturalengland.org.uk',
