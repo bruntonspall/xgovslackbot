@@ -3,6 +3,7 @@
 var approvedDomains = [
   'acas.org.uk',
   'bankofengland.co.uk',
+  'biglotteryfund.org.uk',
   'bl.uk',
   'bmtdsl.co.uk',
   'cqc.org.uk',
