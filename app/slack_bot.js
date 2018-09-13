@@ -394,6 +394,28 @@ controller.hears(["^set role for <@(.*)> to (.*)"], 'direct_mention,direct_messa
   });
 });
 
+controller.hears(["(https:\\/\\/www\\.civilservicejobs\\.service\\.gov\\.uk\\/csr\\/index\\.cgi\\?SID=[a-zA-Z0-9=]+)"], 'ambient,direct_message,direct_mention', function(bot, message) {
+  bot.startConversation(message, function (err, convo) {
+    const longUrl = message.match[1];
+    request(longUrl, function (err, res, body) {
+      if (err) return
+      console.log(JSON.stringify(message));
+      const matches = body.match(/https:\/\/www\.civilservicejobs\.service\.gov\.uk\/csr\/jobs\.cgi\?jcode=[0-9=]+/)
+      if (matches.length > 0) {
+        const shortUrl = matches[0];
+        switch (message.type) {
+          case 'direct_message':
+          case 'direct_mention':
+            convo.say({text: 'Here’s the shorter URL: ' + shortUrl});
+            break;
+          case 'ambient':
+            convo.say({ephemeral: true, text: "Psst! You might want to use the shorter URL: "+matches[0]});
+        }
+      }
+    });
+  })
+});
+
 /**
  * Welcome new joiners with a private message from xgovslackbot
  */
