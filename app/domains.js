@@ -9,6 +9,7 @@ var approvedDomains = [
   'cqc.org.uk',
   'ddc-mod.org',
   'digital.nhs.uk',
+  'electoralcommission.org.uk',
   'gov.scot',
   'gov.uk',
   'hee.nhs.uk',
