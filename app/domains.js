@@ -6,6 +6,7 @@ var approvedDomains = [
   'biglotteryfund.org.uk',
   'bl.uk',
   'bmtdsl.co.uk',
+  'brighton-hove.gov.uk',
   'cqc.org.uk',
   'ddc-mod.org',
   'digital.nhs.uk',
