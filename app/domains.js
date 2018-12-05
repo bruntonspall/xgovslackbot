@@ -5,6 +5,7 @@ var approvedDomains = [
   'bankofengland.co.uk',
   'biglotteryfund.org.uk',
   'bl.uk',
+  'cjsm.net',
   'bmtdsl.co.uk',
   'cqc.org.uk',
   'ddc-mod.org',
