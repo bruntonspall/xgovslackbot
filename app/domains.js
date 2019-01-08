@@ -10,6 +10,7 @@ var approvedDomains = [
   'ddc-mod.org',
   'digital.nhs.uk',
   'electoralcommission.org.uk',
+  'food.gov.uk',
   'gov.scot',
   'gov.uk',
   'hee.nhs.uk',
