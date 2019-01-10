@@ -14,6 +14,7 @@ var approvedDomains = [
   'gov.uk',
   'hee.nhs.uk',
   'highwaysengland.co.uk',
+  'hlf.org.uk',
   'hmcts.net',
   'hs2.org.uk',
   'jncc.gov.uk',
