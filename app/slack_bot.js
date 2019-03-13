@@ -425,14 +425,21 @@ function startIntroductionConversation(user) {
         }, (err, convo) => {
             convo.say(
                 // This is the message new joiners will get as a DM from the bot
-                `Hello, I'm ${bot.identity.name}, the Bot for this slack instance`);
+                `Hello, Welcome to the cross government slack.  I'm ${bot.identity.name}, I'm a robot who can help you with a few things on this slack instance`);
             convo.say(
+                'There are a lot of people from various departments on this slack instance, and it can be hard to know who you are!' +
                 'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
                 `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
                 'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
                 `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
             );
-          convo.say("I can respond to a variety of commands, ask me 'help' or 'commands' for a list");
+            convo.say(
+                'If you were directed here to discuss Notify, then you might want to join #govuk-notify where the team can answer your questions');
+            convo.say(
+                'Finally, please remember that Slack, as are all digital communications that public servants use, is subject to FOI regulation. Please remember that things you write on here could be requested and released for the public.  We expect all members to abide by the civil service code for honesty, integrity, impartiality and objectivity');
+            convo.say(
+                'I can provide you with help on a few things. The main one is inviting your coworkers if they can\'t signup automatically.  Anybody with an email address that ends .gov.uk can be invited by replying to me saying `invite email@address`. I should reply to you telling them the invite has been sent.');
+          convo.say("I respond to some other commands, message me 'help' or 'commands' for a list of them");
         });
 }
 
