@@ -438,8 +438,8 @@ function startIntroductionConversation(user) {
             convo.say(
                 'Finally, please remember that Slack, as are all digital communications that public servants use, is subject to FOI regulation. Please remember that things you write on here could be requested and released for the public.  We expect all members to abide by the civil service code for honesty, integrity, impartiality and objectivity');
             convo.say(
-                'I can provide you with help on a few things, the main one is inviting your coworkers if they can\'t signup automatically.  Anybody with an email address that ends .gov.uk can be invited by replying to me saying `invite email@address`. I should reply to you telling them the invite has been sent.');
-          convo.say("I can respond to a variety of commands, ask me 'help' or 'commands' for a list");
+                'I can provide you with help on a few things. The main one is inviting your coworkers if they can\'t signup automatically.  Anybody with an email address that ends .gov.uk can be invited by replying to me saying `invite email@address`. I should reply to you telling them the invite has been sent.');
+          convo.say("I respond to some other commands, message me 'help' or 'commands' for a list of them");
         });
 }
 
