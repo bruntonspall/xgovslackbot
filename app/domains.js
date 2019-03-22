@@ -1,6 +1,14 @@
 /*jshint esversion:6*/
 
+/*
+Adding an entry into the `approvedDomains` array below works as a postfix so any email domain ending with a postfix can then be invited through the bot.
+
+For example, the main entry below is `gov.uk` allowing @agency.gov.uk, @department.gov.uk or @something.executiveagency.gov.uk to be invite-able through the bot. Another example would be `police.uk`, which allows @force1.police.uk and @force2.police.uk.
+*/
+
 var approvedDomains = [
+  'gov.uk',
+  'gov.scot',
   'acas.org.uk',
   'bankofengland.co.uk',
   'biglotteryfund.org.uk',
@@ -11,8 +19,6 @@ var approvedDomains = [
   'ddc-mod.org',
   'digital.nhs.uk',
   'electoralcommission.org.uk',
-  'gov.scot',
-  'gov.uk',
   'hee.nhs.uk',
   'highwaysengland.co.uk',
   'hlf.org.uk',
