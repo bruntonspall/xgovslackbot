@@ -10,6 +10,7 @@ var approvedDomains = [
   'gov.uk',
   'gov.scot',
   'acas.org.uk',
+  'awe.co.uk',
   'bankofengland.co.uk',
   'biglotteryfund.org.uk',
   'bl.uk',
