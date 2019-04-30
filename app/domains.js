@@ -40,7 +40,8 @@ var approvedDomains = [
   'sepa.org.uk',
   'slc.co.uk',
   'stfc.ac.uk',
-  'wiltonpark.org.uk'
+  'wiltonpark.org.uk',
+  'ukri.org'
 ]
 
 function hasApprovedEmail(email) {
