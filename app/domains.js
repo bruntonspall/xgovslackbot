@@ -31,6 +31,7 @@ var approvedDomains = [
   'naturalengland.org.uk',
   'nhs.net',
   'nhsbt.nhs.uk',
+  'nhsx.nhs.uk',
   'nice.org.uk',
   'os.uk',
   'parliament.scot',
