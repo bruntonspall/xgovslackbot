@@ -42,6 +42,7 @@ var approvedDomains = [
   'sepa.org.uk',
   'slc.co.uk',
   'stfc.ac.uk',
+  'tnlcommunityfund.org.uk',
   'wiltonpark.org.uk',
   'ukri.org'
 ]
