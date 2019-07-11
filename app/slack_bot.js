@@ -515,3 +515,17 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
     });
   });
 });
+
+const weatherSlashCommand = (bot, raw_message) => {
+
+}
+
+controller.on('slash_command', (bot, message) => {
+  const slack_message = message.raw_message;
+  switch(slack_message.command) {
+    case "weather":
+      weatherSlashCommand(bot, raw_message);
+      break;
+
+  }
+})
