@@ -520,6 +520,11 @@ controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, messa
   bot.replyInThread(message, "Checkin' the weather for you now 🌞");
   const heard_word = message.text.split(" ")[1];
   const location = message.text.split(heard_word)[1];
+  /**
+   * The Glitch app is written by Jake Hendy (@JakeHendy) and accesses the Met Office Weather DataHub, as well as
+   * its own internal, semi-public Gazetteer. 
+   * The GlitchApp returns an object containing a `blocks` property, which is fed straight through as the response.
+   */
   request.get({url: 'https://slack-wdh-gaz.glitch.me/weather?location=' + location, json: true }, (error, response, body) => {
     bot.reply(message, body);
   })
