@@ -525,7 +525,16 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
 
 controller.hears(['weather', 'wx'], 'ambient,direct_mention,direct_message', (bot, message) => {
   bot.replyInThread(message, "Checkin' the weather for you now 🌞");
+  /** 
+  message.text == <@botID> weather location
+  message.text.split(" ") == ["<@botID", "weather", "location_part1", "location_part2"]
+  Which utterance got us here?             ^^^ this one, so split on that word
+  */
   const heard_word = message.text.split(" ")[1];
+  /**
+   * message.text == <@botID> weather location
+   * message.text.split("weather") == ["<@botID>", "location"]
+   */
   const location = message.text.split(heard_word)[1];
   /**
    * The Glitch app is written by Jake Hendy (@JakeHendy) and accesses the Met Office Weather DataHub, as well as
@@ -534,6 +543,20 @@ controller.hears(['weather', 'wx'], 'ambient,direct_mention,direct_message', (bo
    * https://api.slack.com/tools/block-kit-builder is a good tool to build block kits. 
    */
   request.get({url: 'https://slack-wdh-gaz.glitch.me/weather?location=' + location, json: true }, (error, response, body) => {
-    bot.reply(message, body);
+    if(response.statusCode !== 200) {
+      let content = [
+        {
+          "type": "section",
+          "text": {
+            "type": "plain_text",
+            "text": "It seems we're unable to get a result for you 😢 try again later or ping @Jake Hendy",
+            "emoji": true
+          }
+        }
+      ]
+      bot.reply(message, content)
+    } else {
+      bot.reply(message, body);
+    }
   })
 })
