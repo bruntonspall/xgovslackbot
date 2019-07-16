@@ -455,7 +455,7 @@ controller.hears(["^welcome"], 'direct_mention,direct_message', function(bot, me
 
 controller.hears(["^help","^commands"], "direct_message", function(bot, message) {
   bot.startConversation(message, function(err,convo) {
-    TOPICS="I can tell you about:\nwelcome\ninvites\nannouncements\nroles\nWhich would you like to know more about? (say done when you are finished)";
+    TOPICS="I can tell you about:\nwelcome\ninvites\nannouncements\nroles\nweather\nWhich would you like to know more about? (say done when you are finished)";
     convo.addQuestion(TOPICS, [
       {
         pattern: 'welcome',
@@ -492,6 +492,13 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
         }
       },
       {
+        pattern: "weather?",
+        callback: function(response, convo) {
+          convo.say("Asking for the weather will get you a forecast from the Met Office. Example: @${bot.identity.name} weather Exeter or @${bot.identity.name} wx Edinburgh.\nFeedback is always appreciated, give @Jake Hendy a heads up.");
+          convo.next();
+        }
+      },
+      {
         pattern: "done",
         callback: function(response, convo) {
           convo.say("Ok, I hope I was helpful");
@@ -516,7 +523,7 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
   });
 });
 
-controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, message) => {
+controller.hears(['weather', 'wx'], 'ambient,direct_mention,direct_message', (bot, message) => {
   bot.replyInThread(message, "Checkin' the weather for you now 🌞");
   const heard_word = message.text.split(" ")[1];
   const location = message.text.split(heard_word)[1];
