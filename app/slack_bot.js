@@ -524,6 +524,7 @@ controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, messa
    * The Glitch app is written by Jake Hendy (@JakeHendy) and accesses the Met Office Weather DataHub, as well as
    * its own internal, semi-public Gazetteer. 
    * The GlitchApp returns an object containing a `blocks` property, which is fed straight through as the response.
+   * https://api.slack.com/tools/block-kit-builder is a good tool to build block kits. 
    */
   request.get({url: 'https://slack-wdh-gaz.glitch.me/weather?location=' + location, json: true }, (error, response, body) => {
     bot.reply(message, body);
