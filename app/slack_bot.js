@@ -516,16 +516,11 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
   });
 });
 
-const weatherSlashCommand = (bot, raw_message) => {
-
-}
-
-controller.on('slash_command', (bot, message) => {
-  const slack_message = message.raw_message;
-  switch(slack_message.command) {
-    case "weather":
-      weatherSlashCommand(bot, raw_message);
-      break;
-
-  }
+controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, message) => {
+  bot.replyInThread(message, "Checkin' the weather for you now 🌞");
+  const heard_word = message.text.split(" ")[1];
+  const location = message.text.split(heard_word)[1];
+  request.get({url: 'https://slack-wdh-gaz.glitch.me/weather?location=' + location, json: true }, (error, response, body) => {
+    bot.reply(message, body);
+  })
 })
