@@ -523,7 +523,7 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
   });
 });
 
-controller.hears(['weather', 'wx'], 'ambient,direct_mention,direct_message', (bot, message) => {
+controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, message) => {
   bot.replyInThread(message, "Checkin' the weather for you now 🌞");
   /** 
   message.text == <@botID> weather location
