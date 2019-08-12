@@ -34,6 +34,7 @@ var approvedDomains = [
   'nhsbt.nhs.uk',
   'nhsx.nhs.uk',
   'nice.org.uk',
+  'ofgem.gov.uk',
   'os.uk',
   'parliament.scot',
   'parliament.uk',
