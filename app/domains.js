@@ -31,6 +31,7 @@ var approvedDomains = [
   'marinemanagement.org.uk',
   'mod.uk',
   'naturalengland.org.uk',
+  'nature.scot',
   'nhs.net',
   'nhsbt.nhs.uk',
   'nhsx.nhs.uk',
