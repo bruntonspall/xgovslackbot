@@ -30,6 +30,7 @@ var approvedDomains = [
   'leadershipacademy.nhs.uk',
   'marinemanagement.org.uk',
   'mod.uk',
+  'mod.gov.uk',
   'naturalengland.org.uk',
   'nature.scot',
   'nhs.net',
