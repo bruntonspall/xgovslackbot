@@ -21,6 +21,7 @@ var approvedDomains = [
   'digital.nhs.uk',
   'electoralcommission.org.uk',
   'hee.nhs.uk',
+  'hes.scot',
   'highwaysengland.co.uk',
   'hlf.org.uk',
   'hmcts.net',
