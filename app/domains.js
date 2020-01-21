@@ -29,6 +29,7 @@ var approvedDomains = [
   'jncc.gov.uk',
   'judicialappointments.digital',
   'leadershipacademy.nhs.uk',
+  'llyw.cymru',
   'marinemanagement.org.uk',
   'mod.uk',
   'naturalengland.org.uk',
