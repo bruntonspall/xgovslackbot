@@ -48,7 +48,9 @@ var approvedDomains = [
   'slc.co.uk',
   'stfc.ac.uk',
   'tnlcommunityfund.org.uk',
+  'tfwm.org.uk',
   'wiltonpark.org.uk',
+  'wmca.org.uk',
   'ukri.org'
 ]
 
