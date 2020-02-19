@@ -48,6 +48,7 @@ var approvedDomains = [
   'slc.co.uk',
   'stfc.ac.uk',
   'tnlcommunityfund.org.uk',
+  'transportforthenorth.com',
   'wiltonpark.org.uk',
   'ukri.org'
 ]
