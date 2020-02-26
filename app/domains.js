@@ -46,6 +46,7 @@ var approvedDomains = [
   'scotent.co.uk',
   'sepa.org.uk',
   'slc.co.uk',
+  'socialcare.wales',
   'stfc.ac.uk',
   'tnlcommunityfund.org.uk',
   'tfwm.org.uk',
