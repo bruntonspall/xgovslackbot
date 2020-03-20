@@ -270,43 +270,17 @@ controller.hears(['^announce (.*)'],
 );
 
 
-controller.hears(['^invite.*\\|(.*)>'],
-  'direct_message,direct_mention', function(bot, message) {
+controller.hears(['^invite.*\\|(.*)>'], 'direct_message', function(bot, message) {
     var email = message.match[1];
     controller.log("Got an invite for email: "+email);
-    if (!domains.hasApprovedEmail(email)) {
-      bot.replyInThread(message, "I only send invites to people with GOV.UK or otherwise approved email address");
-      return;
-    }
-    request.post({
-          url: `https://${slackDomain}.slack.com/api/users.admin.invite`,
-          form: {
-            email: email,
-            token: process.env.apitoken,
-            set_active: true
-          }
-        }, function(err, httpResponse, body) {
-          // body looks like:
-          //   {"ok":true}
-          //       or
-          //   {"ok":false,"error":"already_invited"}
-          if (err) { return res.send('Error:' + err); }
-          body = JSON.parse(body);
-          if (body.ok) {
-            bot.replyInThread(message, "Invite sent, tell them to check their email");
-          } else {
-            if (body.error === "invalid_email") {
-              bot.replyInThread(message, "The email is not valid.  Email: "+message.match[1]);
-            } else if (body.error === "invalid_auth") {
-              bot.replyInThread(message, "Michael Bot-Spall doesn't have the rights to do that");
-            } else if (body.error === "already_in_team") {
-              bot.replyInThread(message, "That person is already invited");
-            } else {
-              bot.replyInThread(message, "Michael Bot-Spall got an error from slack: "+body.error);
-            }
-          }
-        });
-  });
+    bot.reply(`I'm afraid that I can no longer invite people.  Instead type /invite_people $email and that will invite them`);
+}
+
+controller.hears(['^invite.*\\|(.*)>'], 'direct_mention', function(bot, message) {
+    var email = message.match[1];
+    controller.log("Got an invite for email: "+email);
+    bot.replyInThread(`I'm afraid that I can no longer invite people.  Instead type /invite_people $email and that will invite them`);
+}
 
 controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is your name$'],
     'direct_message,direct_mention,mention', function(bot, message) {
@@ -437,9 +411,6 @@ function startIntroductionConversation(user) {
                 'If you were directed here to discuss Notify, then you might want to join #govuk-notify where the team can answer your questions');
             convo.say(
                 'Finally, please remember that Slack, as are all digital communications that public servants use, is subject to FOI regulation. Please remember that things you write on here could be requested and released for the public.  We expect all members to abide by the civil service code for honesty, integrity, impartiality and objectivity');
-            convo.say(
-                'I can provide you with help on a few things. The main one is inviting your coworkers if they can\'t signup automatically.  Anybody with an email address that ends .gov.uk can be invited by replying to me saying `invite email@address`. I should reply to you telling them the invite has been sent.');
-          convo.say("I respond to some other commands, message me 'help' or 'commands' for a list of them");
         });
 }
 
@@ -461,14 +432,6 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
         pattern: 'welcome',
         callback: function(response, convo) {
           convo.say("If you say welcome in this private chat, I'll repeat the welcome message");
-          convo.repeat();
-          convo.next();
-        }
-      },
-      {
-        pattern: 'invites?',
-        callback: function(response, convo) {
-          convo.say("To invite someone to this slack, just say invite <email> in this private chat, or mentioned to me in a channel and I'll send an email to them to invite them.\nOnly people with domains in the following list will get an invite: " + domains.approvedDomainsString() + ".\nYou can submit a pull request to change the list in https://github.com/bruntonspall/xgovslackbot/blob/master/app/domains.js to add a domain I don't know about");
           convo.repeat();
           convo.next();
         }
