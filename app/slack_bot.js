@@ -274,39 +274,15 @@ controller.hears(['^invite.*\\|(.*)>'],
   'direct_message,direct_mention', function(bot, message) {
     var email = message.match[1];
     controller.log("Got an invite for email: "+email);
-    if (!domains.hasApprovedEmail(email)) {
-      bot.replyInThread(message, "I only send invites to people with GOV.UK or otherwise approved email address");
-      return;
-    }
-    request.post({
-          url: `https://${slackDomain}.slack.com/api/users.admin.invite`,
-          form: {
-            email: email,
-            token: process.env.apitoken,
-            set_active: true
-          }
-        }, function(err, httpResponse, body) {
-          // body looks like:
-          //   {"ok":true}
-          //       or
-          //   {"ok":false,"error":"already_invited"}
-          if (err) { return res.send('Error:' + err); }
-          body = JSON.parse(body);
-          if (body.ok) {
-            bot.replyInThread(message, "Invite sent, tell them to check their email");
-          } else {
-            if (body.error === "invalid_email") {
-              bot.replyInThread(message, "The email is not valid.  Email: "+message.match[1]);
-            } else if (body.error === "invalid_auth") {
-              bot.replyInThread(message, "Michael Bot-Spall doesn't have the rights to do that");
-            } else if (body.error === "already_in_team") {
-              bot.replyInThread(message, "That person is already invited");
-            } else {
-              bot.replyInThread(message, "Michael Bot-Spall got an error from slack: "+body.error);
-            }
-          }
-        });
-  });
+    bot.reply(`I'm afraid that I can no longer invite people.  Instead type /invite_people $email and that will invite them`);
+});
+
+controller.hears(['^invite.*\\|(.*)>'], 'direct_mention', function(bot, message) {
+    var email = message.match[1];
+    controller.log("Got an invite for email: "+email);
+    bot.replyInThread(`I'm afraid that I can no longer invite people.  Instead type /invite_people $email and that will invite them`);
+});
+
 
 controller.hears(['^uptime$', '^identify yourself$', '^who are you$', '^what is your name$'],
     'direct_message,direct_mention,mention', function(bot, message) {
