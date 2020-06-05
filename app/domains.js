@@ -42,6 +42,7 @@ var approvedDomains = [
   'os.uk',
   'parliament.scot',
   'parliament.uk',
+  'planninginspectorate.go.uk',
   'police.uk',
   'scotent.co.uk',
   'sepa.org.uk',
