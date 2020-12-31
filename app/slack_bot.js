@@ -404,10 +404,10 @@ function startIntroductionConversation(user) {
       `Hello, Welcome to the cross government slack.  I'm ${bot.identity.name}, I'm a robot who can help you with a few things on this slack instance`);
     // Welcome and username recommendations
     convo.say(
-      'There are a lot of people from various departments on this slack instance, and it can be hard to know who you are!' +
-      'Please add your organisation name to the end of your slack handle so that other users can easily see where you work. For example, `displayname_hmrc` or `displayname_dwp`.\n' +
+      'There are a lot of people from various departments on this slack instance, and it can be hard to know who people are and what they do!' +
+      '1. Please add the name of the government organisation you represent to your display name. For example,  `JaneRodriguez_HMRC` or `RogerR1_Ofcom`.\n' +
       `You can change it here: https://${slackDomain}.slack.com/account/profile#display_name_profile_field\n` +
-      'Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
+      '2. Please also update your profile to describe your role in the organisation, for example "Delivery manager at GDS".\n' +
       `You can edit your profile here: https://${slackDomain}.slack.com/account/profile\n`
     );
     // Notify signposting
