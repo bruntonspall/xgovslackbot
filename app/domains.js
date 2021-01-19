@@ -31,6 +31,7 @@ var approvedDomains = [
   'judicialappointments.digital',
   'leadershipacademy.nhs.uk',
   'llyw.cymru',
+  'maps.org.uk',
   'marinemanagement.org.uk',
   'mod.uk',
   'naturalengland.org.uk',
