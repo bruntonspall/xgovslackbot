@@ -1,6 +1,16 @@
 /*jshint esversion:6*/
 
 /*
+README
+THIS MODULE OF THE SLACKBOT IS NO LONGER FUNCTIONAL.
+Access to the ukgovernmentdigital.slack.com is no longer managed through this slackbot. Please do not submit PRs against approvedDomains.
+*/
+
+/*
+DO NOT PR BEYOND THIS LINE
+*/
+
+/*
 Adding an entry into the `approvedDomains` array below works as a postfix so any email domain ending with a postfix can then be invited through the bot.
 
 For example, the main entry below is `gov.uk` allowing @agency.gov.uk, @department.gov.uk or @something.executiveagency.gov.uk to be invite-able through the bot. Another example would be `police.uk`, which allows @force1.police.uk and @force2.police.uk.
