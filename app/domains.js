@@ -53,7 +53,8 @@ var approvedDomains = [
   'transportforthenorth.com',
   'wiltonpark.org.uk',
   'wmca.org.uk',
-  'ukri.org'
+  'ukri.org',
+  'engineering.digital.dwp.gov.uk'
 ]
 
 function hasApprovedEmail(email) {
