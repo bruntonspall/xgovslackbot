@@ -533,16 +533,13 @@ controller.hears(["^help","^commands"], "direct_message", function(bot, message)
 controller.hears(['weather', 'wx'], 'direct_mention,direct_message', (bot, message) => {
   bot.replyAndUpdate(message, "Checkin' the weather for you now 🌞", (err, src, updateResponse) => {
     /**
-    message.text == <@botID> weather location
+    message.text == <@botID> weather location # <@botID> is apparently optional...
     message.text.split(" ") == ["<@botID", "weather", "location_part1", "location_part2"]
     Which utterance got us here?             ^^^ this one, so split on that word
     */
-    const heard_word = message.text.split(" ")[1];
-    /**
-     * message.text == <@botID> weather location
-     * message.text.split("weather") == ["<@botID>", "location"]
-     */
-    const location = message.text.split(heard_word)[1];
+    const splittingWord = message.text.indexOf("wx") === -1 ? "weather" : "wx";
+    const location = message.text.split(splittingWord)[1];
+    controller.log(`Heard location ${location}`);
     /**
      * The Glitch app is written by Jake Hendy (@JakeHendy) and accesses the Met Office Weather DataHub, as well as
      * its own internal, semi-public Gazetteer.
